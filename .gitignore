@@ -1,0 +1,23 @@
+# Laravel standard
+/vendor
+/node_modules
+/public/storage
+/storage/*.key
+.env
+.env.*
+/.phpunit.result.cache
+
+# Laravel Horizon & Telescope
+horizon.sqlite
+telescope.sqlite
+
+# Laravel Sail
+docker-compose.override.yml
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE / Editor
+.idea
+.vscode

@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('program_id')->constrained('programs')->onDelete('cascade');
             $table->string('name', 255);
-            $table->decimal('latitude', 10, 8);
-            $table->decimal('longitude', 11, 8);
+            $table->decimal('latitude', 9, 7);
+            $table->decimal('longitude', 10, 7);
             $table->timestamps();
         });
     }

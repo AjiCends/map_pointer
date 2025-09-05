@@ -1,0 +1,49 @@
+Map Pointer Management System
+
+Deskripsi Singkat
+
+Sistem ini digunakan untuk mengelola program, kegiatan (activities), dan foto-foto kegiatan yang ditampilkan di peta berdasarkan koordinat latitude dan longitude. Pengguna harus login terlebih dahulu untuk mengakses dashboard dan fitur CRUD.
+
+Fitur Utama
+
+Autentikasi Pengguna
+
+Login dan registrasi user.
+
+Setiap user dapat membuat banyak program.
+
+Dashboard
+
+Menampilkan program terbaru.
+
+Menampilkan list kegiatan dalam setiap program.
+
+Manajemen Program
+
+CRUD program (create, read, update, delete).
+
+Setiap program memiliki:
+
+name
+
+description
+
+relasi dengan user (user_id).
+
+Manajemen Kegiatan (Activities)
+
+Setiap program dapat memiliki banyak kegiatan.
+
+Setiap kegiatan memiliki:
+
+name
+
+latitude dan longitude (untuk posisi di peta).
+
+relasi dengan program (program_id).
+
+Foto Kegiatan
+
+Setiap kegiatan dapat memiliki banyak foto.
+
+Foto disimpan sebagai photo_url.

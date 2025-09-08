@@ -17,8 +17,14 @@ class ProgramController extends Controller
             ->where('user_id', Auth::id())
             ->latest()
             ->paginate(10);
-            
+
         return view('programs.index', compact('programs'));
+        // Swal::fire([
+        //     'title' => 'Laravel + SweetAlert2 = <3',
+        //     'text' => 'This is a simple alert using SweetAlert2',
+        //     'icon' => 'success',
+        //     'confirmButtonText' => 'Cool'
+        // ]);
     }
 
     /**
@@ -55,12 +61,13 @@ class ProgramController extends Controller
     public function show(Program $program)
     {
         // Pastikan user hanya bisa melihat program miliknya sendiri
-        if ($program->user_id !== Auth::id()) {
+        if ($program->user_id !== Auth::id())
+        {
             abort(403);
         }
 
         $program->load('activities.photos');
-        
+
         return view('programs.show', compact('program'));
     }
 
@@ -70,7 +77,8 @@ class ProgramController extends Controller
     public function edit(Program $program)
     {
         // Pastikan user hanya bisa edit program miliknya sendiri
-        if ($program->user_id !== Auth::id()) {
+        if ($program->user_id !== Auth::id())
+        {
             abort(403);
         }
 
@@ -82,7 +90,8 @@ class ProgramController extends Controller
      */
     public function update(Request $request, Program $program)
     {
-        if ($program->user_id !== Auth::id()) {
+        if ($program->user_id !== Auth::id())
+        {
             abort(403);
         }
 
@@ -106,7 +115,8 @@ class ProgramController extends Controller
     public function destroy(Program $program)
     {
         // Pastikan user hanya bisa delete program miliknya sendiri
-        if ($program->user_id !== Auth::id()) {
+        if ($program->user_id !== Auth::id())
+        {
             abort(403);
         }
 

@@ -62,44 +62,54 @@ class ActivityController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Activity $activity)
     {
-        $activity = Activity::findOrFail($id);
+        if ($activity->program->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $activity->load('galleries');
         return view('activities.edit', compact('activity'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Activity $activity)
     {
+        if ($activity->program->user_id !== Auth::id()) {
+            abort(403);
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'latitude' => 'required',
             'longitude' => 'required',
         ]);
 
-        $activity = Activity::findOrFail($id);
         $activity->update([
             'name' => $request->name,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
         ]);
 
-        return redirect()->route('programs.show', $activity->program_id)
-            ->with('success', 'Activitas berhasil diupdate!');
+        return redirect()->route('programs.show', $activity->program)
+            ->with('success', 'Kegiatan berhasil diupdate!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Activity $activity)
     {
-        $activity = Activity::findOrFail($id);
+        if ($activity->program->user_id !== Auth::id()) {
+            abort(403);
+        }
+
         $programId = $activity->program_id;
         $activity->delete();
 
         return redirect()->route('programs.show', $programId)
-            ->with('success', 'Activitas berhasil dihapus!');
+            ->with('success', 'Kegiatan berhasil dihapus!');
     }
 }

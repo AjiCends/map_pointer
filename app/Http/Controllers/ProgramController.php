@@ -54,12 +54,11 @@ class ProgramController extends Controller
      */
     public function show(Program $program)
     {
-        // Pastikan user hanya bisa melihat program miliknya sendiri
         if ($program->user_id !== Auth::id()) {
             abort(403);
         }
 
-        $program->load('activities.photos');
+        $program->load('activities.galleries');
         
         return view('programs.show', compact('program'));
     }
@@ -69,7 +68,6 @@ class ProgramController extends Controller
      */
     public function edit(Program $program)
     {
-        // Pastikan user hanya bisa edit program miliknya sendiri
         if ($program->user_id !== Auth::id()) {
             abort(403);
         }
@@ -105,7 +103,6 @@ class ProgramController extends Controller
      */
     public function destroy(Program $program)
     {
-        // Pastikan user hanya bisa delete program miliknya sendiri
         if ($program->user_id !== Auth::id()) {
             abort(403);
         }

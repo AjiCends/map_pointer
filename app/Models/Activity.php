@@ -21,8 +21,8 @@ class Activity extends Model
         return $this->belongsTo(Program::class);
     }
 
-    public function photos()
+    public function galleries()
     {
-        return $this->hasMany(Photo::class);
+        return $this->hasMany(Gallery::class);
     }
 }

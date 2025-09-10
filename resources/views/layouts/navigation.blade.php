@@ -1,4 +1,8 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+{{-- <nav x-data="{ open: false }" class="bg-white border-b border-gray-100 sticky top-0 z-50"> --}}
+<nav x-data="{ open: false, scrolled: false }" x-init="window.addEventListener('scroll', () => {
+    scrolled = window.scrollY > 0
+})" :class="scrolled ? 'shadow-md' : ''"
+    class="bg-white border-b border-gray-100 sticky top-0 z-50 transition-shadow duration-300">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">

@@ -16,7 +16,7 @@ class ActivityController extends Controller
     {
         $activities = Activity::where('program_id')
             ->latest()
-            ->paginate(10);
+            ->paginate(5);
 
         return view('activities.index', compact('activities'));
     }
@@ -47,8 +47,8 @@ class ActivityController extends Controller
             'longitude' => $request->longitude,
         ]);
 
-        return redirect()->route('programs.show', $program->id)
-            ->with('success', 'Activitas berhasil dibuat!');
+        notyf('Activitas berhasil dibuat!');
+        return redirect()->route('programs.show', $program->id);
     }
 
     /**

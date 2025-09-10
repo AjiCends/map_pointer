@@ -47,7 +47,7 @@ class GalleryController extends Controller
 
         $request->validate([
             'photos' => 'required|array|max:10',
-            'photos.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'photos.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:3072'
         ]);
 
         foreach ($request->file('photos') as $photo) {
@@ -59,26 +59,26 @@ class GalleryController extends Controller
             ]);
         }
 
-        return redirect()->route('gallery.index', $activity)
-            ->with('success', 'Foto berhasil diupload!');
+        notyf('Foto berhasil diupload!');
+        return redirect()->route('gallery.index', $activity);
     }
-
+    
     /**
      * Remove the specified resource from storage.
-     */
+    */
     public function destroy(Activity $activity, Gallery $gallery)
     {
         if ($activity->program->user_id !== Auth::id() || $gallery->activity_id !== $activity->id) {
             abort(403);
         }
-
+        
         if ($gallery->image_url) {
             Storage::disk('public')->delete($gallery->image_url);
         }
-
+        
         $gallery->delete();
-
-        return redirect()->route('gallery.index', $activity)
-            ->with('success', 'Foto berhasil dihapus!');
+        
+        notyf('Foto berhasil dihapus!');
+        return redirect()->route('gallery.index', $activity);
     }
 }

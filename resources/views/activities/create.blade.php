@@ -1,15 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Tambah Program Baru') }}
+            {{ __('Tambah Kegiatan Baru') }}
         </h2>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-2 sm:py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white rounded-lg shadow-sm sm:p-10"">
                 <div class="p-6 text-gray-900">
-                    <form action="{{ route('activities.store', $program->id) }}" method="POST" class="max-w-2xl">
+                    <form action="{{ route('activities.store', $program->id) }}" method="POST" class="sm:px-24">
                         @csrf
                         <div class="mb-6">
                             <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
@@ -55,7 +55,7 @@
                         </div>
 
                         <div class="flex justify-between items-center">
-                            <a href="{{ route('programs.index') }}" 
+                            <a href="{{ route('programs.show', $program->id) }}" 
                                class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                                 Kembali
                             </a>

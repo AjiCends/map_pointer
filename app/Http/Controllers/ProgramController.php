@@ -5,26 +5,23 @@ namespace App\Http\Controllers;
 use App\Models\Program;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use function Flasher\Notyf\Prime\notyf;
 
 class ProgramController extends Controller
 {
     /**
      * Display a listing of the resource.
-     */
+    */
+    
+
     public function index()
     {
         $programs = Program::with('activities')
             ->where('user_id', Auth::id())
             ->latest()
-            ->paginate(10);
+            ->paginate(5);
 
         return view('programs.index', compact('programs'));
-        // Swal::fire([
-        //     'title' => 'Laravel + SweetAlert2 = <3',
-        //     'text' => 'This is a simple alert using SweetAlert2',
-        //     'icon' => 'success',
-        //     'confirmButtonText' => 'Cool'
-        // ]);
     }
 
     /**
@@ -51,8 +48,9 @@ class ProgramController extends Controller
             'description' => $request->description,
         ]);
 
-        return redirect()->route('programs.index')
-            ->with('success', 'Program berhasil dibuat!');
+        notyf()->success('Program berhasil ditambahkan!');
+        return redirect()->route('programs.index');
+
     }
 
     /**
@@ -101,8 +99,8 @@ class ProgramController extends Controller
             'description' => $request->description,
         ]);
 
-        return redirect()->route('programs.index')
-            ->with('success', 'Program berhasil diperbarui!');
+        notyf()->success('Program berhasil diperbarui!');
+        return redirect()->route('programs.index');
     }
 
     /**
@@ -115,8 +113,7 @@ class ProgramController extends Controller
         }
 
         $program->delete();
-
-        return redirect()->route('programs.index')
-            ->with('success', 'Program berhasil dihapus!');
+        notyf()->error('Program berhasil dihapus!');
+        return redirect()->route('programs.index');
     }
 }

@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
+use function Flasher\Notyf\Prime\notyf;
+
 class AuthenticatedSessionController extends Controller
 {
     /**
@@ -28,8 +30,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $request->session()->flash('success', 'Successfully logged in!');
-
+        notyf()->addSuccess('Welcome back, ' . Auth::user()->name . '!');
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

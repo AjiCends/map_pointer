@@ -13,15 +13,20 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <style>
+        * {
+            /* border: solid 1px red */
+        }
+    </style>
 </head>
 
-<body class="font-sans antialiased">
+<body class="font-sans antialiased ">
 
-    <div class="min-h-screen bg-gray-100">
+    <div class="bg-gray-100 h-screen">
         @include('layouts.navigation')
 
         <!-- Page Heading -->
@@ -38,10 +43,8 @@
             {{ $slot }}
         </main>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
-
 </body>
 
 </html>

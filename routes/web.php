@@ -14,13 +14,19 @@ Route::get('/', function ()
     return view('welcome');
 });
 
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
+// Dashboard Default
+// Route::get('/dashboard', function ()
+// {
+//     $program = Program::all();
+//     return view('dashboard', compact('program'));
 // })->middleware(['auth', 'verified'])->name('dashboard');
-Route::get('/dashboard', function ()
-{
-    $program = Program::all();
-    return view('dashboard', compact('program'));
+
+// Dashboard with Programs and Activities
+Route::get('/dashboard', function () {
+    // Ambil semua program beserta activities-nya
+    $programs = Program::with('activities')->get();
+
+    return view('dashboard', compact('programs'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 

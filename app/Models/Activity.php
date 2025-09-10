@@ -23,6 +23,6 @@ class Activity extends Model
 
     public function galleries()
     {
-        return $this->hasMany(Gallery::class);
+        return $this->hasMany(Gallery::class, 'activity_id');
     }
 }

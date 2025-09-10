@@ -32,13 +32,13 @@
                     @if ($galleries->count() > 0)
                         <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3 px-3 sm:px-0">
                             @foreach ($galleries as $gallery)
-                                <div class="border border-gray-300 rounded-lg p-4 hover:shadow-lg transition-shadow">
+                                <div class="border border-gray-300 rounded-lg p-4 hover:shadow-lg transition-shadow justify-between">
                                     <div
-                                        class="container max-h-[200px] flex justify-center items-center overflow-hidden mb-3 rounded-md">
+                                        class="container max-h-[150px] flex justify-center items-center overflow-hidden mb-3 rounded-md">
                                         <img src="{{ asset('storage/' . $gallery->image_url) }}" alt="Gallery Image"
-                                            class="object-cover w-full h-full">
+                                            class="object-cover" >
                                     </div>
-                                    <div class="flex justify-between items-center">
+                                    <div class="text-center">
                                         <form action="{{ route('gallery.destroy', [$activity, $gallery]) }}"
                                             method="POST" class="delete-form">
                                             @csrf

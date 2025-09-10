@@ -7,6 +7,7 @@ use App\Models\Gallery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Intervention\Image\Laravel\Facades\Image;
 
 class GalleryController extends Controller
 {
@@ -41,24 +42,83 @@ class GalleryController extends Controller
      */
     public function store(Request $request, Activity $activity)
     {
+        ini_set('memory_limit', '512M');
+        set_time_limit(300);
+        
         if ($activity->program->user_id !== Auth::id()) {
             abort(403);
         }
 
         $request->validate([
             'photos' => 'required|array|max:10',
-            'photos.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:3072'
+            'photos.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:20480'
         ]);
 
-        foreach ($request->file('photos') as $photo) {
-            $path = $photo->store('gallery', 'public');
-            
-            Gallery::create([
-                'activity_id' => $activity->id,
-                'image_url' => $path
-            ]);
-        }
+        foreach ($request->file('photos') as $index => $photo) {
+            try {
+                if ($index % 3 == 0) {
+                    gc_collect_cycles();
+                }
+                
+                $targetSize = 3 * 1024 * 1024;
+                $originalSize = $photo->getSize();
+                
+                if ($originalSize <= $targetSize) {
+                    $path = $photo->store('gallery', 'public');
+                } else {
+                    $image = Image::read($photo);
+                    
+                    $maxWidth = 1920;
+                    $maxHeight = 1080;
+                    
+                    if ($image->width() > $maxWidth || $image->height() > $maxHeight) {
+                        $image->scale(width: $maxWidth, height: $maxHeight);
+                    }
+                    
+                    $quality = 80;
+                    $compressedData = null;
+                    $attempts = 0;
+                    $maxAttempts = 5;
+                    
+                    do {
+                        $compressedData = $image->toJpeg($quality);
+                        $compressedSize = strlen($compressedData);
+                        
+                        if ($compressedSize > $targetSize && $attempts < $maxAttempts) {
+                            $quality -= 15;
+                            $attempts++;
+                        } else {
+                            break;
+                        }
+                    } while ($quality > 30);
+                    
+                    $filename = 'gallery/' . uniqid() . '.jpg';
+                    Storage::disk('public')->put($filename, $compressedData);
+                    $path = $filename;
+                    
+                    unset($image);
+                    unset($compressedData);
+                }
 
+                Gallery::create([
+                    'activity_id' => $activity->id,
+                    'image_url' => $path
+                ]);
+
+            } catch (\Throwable $e) {
+                try {
+                    $path = $photo->store('gallery', 'public');
+                    
+                    Gallery::create([
+                        'activity_id' => $activity->id,
+                        'image_url' => $path
+                    ]);
+                } catch (\Exception $fallbackError) {
+                    continue;
+                }
+            }
+        }
+            
         notyf('Foto berhasil diupload!');
         return redirect()->route('gallery.index', $activity);
     }

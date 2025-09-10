@@ -18,6 +18,9 @@ class ProgramController extends Controller
     {
         $programs = Program::with('activities')
             ->where('user_id', Auth::id())
+            ->with(['activities.galleries' => function($query) {
+                $query->limit(1);
+            }])
             ->latest()
             ->paginate(6);
 

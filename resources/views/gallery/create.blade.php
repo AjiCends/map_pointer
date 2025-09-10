@@ -69,7 +69,6 @@
     <script>
         let selectedFiles = [];
         const maxFiles = 10;
-        const maxFileSize = 3 * 1024 * 1024; // 3MB
 
         const photosInput = document.getElementById('photos');
         const finalPhotos = document.getElementById('finalPhotos');
@@ -86,16 +85,6 @@
             const files = Array.from(event.target.files);
 
             files.forEach(file => {
-                if (file.size > maxFileSize) {
-                    alert(`File ${file.name} terlalu besar. Maksimal 3MB.`);
-                    return;
-                }
-                if (selectedFiles.length >= maxFiles) {
-                    alert(`Maksimal ${maxFiles} foto.`);
-                    return;
-                }
-
-                // cek duplikat
                 const isDuplicate = selectedFiles.some(f => f.name === file.name && f.size === file.size);
                 if (!isDuplicate) {
                     selectedFiles.push(file);
@@ -104,7 +93,7 @@
             });
 
             updateUI();
-            event.target.value = ''; // reset biar bisa pilih file yg sama lagi
+            event.target.value = '';
         }
 
         function createPreview(file, index) {

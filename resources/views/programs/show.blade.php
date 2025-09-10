@@ -101,7 +101,7 @@
                                         <div class="flex justify-between items-center">
                                             <div class="flex space-x-1">
                                                 <button
-                                                    onclick="window.location='{{ route('activities.edit', [$activity->program_id, $activity->id]) }}'"
+                                                    onclick="window.location='{{ route('activities.edit', $activity->id) }}'"
                                                     class="bg-yellow-500 hover:bg-yellow-700 text-white text-xs px-4 py-2 rounded">
                                                     <div class="flex justify-center items-center">
                                                         <x-heroicon-s-pencil class="w-4 h-4 text-white mr-1" />
@@ -117,7 +117,7 @@
                                                     </div>
                                                 </button>
                                                 <form id="delete-form-{{ $activity->id }}"
-                                                    action="{{ route('activities.destroy', [$activity->program_id, $activity->id]) }}"
+                                                    action="{{ route('activities.destroy', $activity->id) }}"
                                                     method="POST" class="hidden">
                                                     @csrf
                                                     @method('DELETE')

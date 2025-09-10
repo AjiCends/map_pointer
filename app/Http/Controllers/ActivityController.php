@@ -16,7 +16,7 @@ class ActivityController extends Controller
     {
         $activities = Activity::where('program_id')
             ->latest()
-            ->paginate(5);
+            ->paginate(6);
 
         return view('activities.index', compact('activities'));
     }
@@ -93,10 +93,10 @@ class ActivityController extends Controller
             'longitude' => $request->longitude,
         ]);
 
-        return redirect()->route('programs.show', $activity->program)
-            ->with('success', 'Kegiatan berhasil diupdate!');
+        notyf('Kegiatan berhasil diupdate!');
+        return redirect()->route('programs.show', $activity->program);
     }
-
+    
     /**
      * Remove the specified resource from storage.
      */
@@ -108,8 +108,8 @@ class ActivityController extends Controller
 
         $programId = $activity->program_id;
         $activity->delete();
-
-        return redirect()->route('programs.show', $programId)
-            ->with('success', 'Kegiatan berhasil dihapus!');
+        
+        notyf('Kegiatan berhasil dihapus!');
+        return redirect()->route('programs.show', $programId);
     }
 }

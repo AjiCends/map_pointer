@@ -19,7 +19,7 @@ class ProgramController extends Controller
         $programs = Program::with('activities')
             ->where('user_id', Auth::id())
             ->latest()
-            ->paginate(5);
+            ->paginate(6);
 
         return view('programs.index', compact('programs'));
     }

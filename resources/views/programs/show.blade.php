@@ -19,13 +19,32 @@
 
     <div class="py-2 sm:py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <!-- Map Section -->
+            @if ($program->activities->count() > 0)
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-6">
+                    <div class="p-6 text-gray-900">
+                        <h3 class="text-xl font-semibold mb-4 text-center">Peta Kegiatan</h3>
+                        <div class="h-48 sm:h-96 rounded-lg" id="map">
+                            {{-- Detail Program (warna per activity) --}}
+                            <x-map :coordinates="$program->activities->map(
+                                fn($a) => [
+                                    'id' => $a->id,
+                                    'lat' => $a->latitude,
+                                    'lng' => $a->longitude,
+                                    'name' => $a->name,
+                                ],
+                            )" id="map-program-{{ $program->id }}" />
+                        </div>
+                    </div>
+                </div>
+            @endif
             <!-- Program Information -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+            <div class="bg-white shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6 text-gray-900">
                     <h3 class="text-lg font-semibold mb-3">Deskripsi Program</h3>
                     <div
                         class="container max-h-60 overflow-y-auto overscroll-contain bg-slate-50 rounded-lg p-4 border border-gray-200">
-                        <p class="text-gray-700 leading-relaxed text-justify">{{ $program->description }}</p>
+                        <p class="text-gray-700 leading-relaxed text-justify p-3">{{ $program->description }}</p>
                     </div>
 
                     <div class="mt-4 text-sm text-gray-500">
@@ -42,7 +61,10 @@
                         <h3 class="text-lg font-semibold">Kegiatan dalam Program</h3>
                         <button onclick="window.location='{{ route('activities.create', $program) }}'"
                             class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                            Tambah Kegiatan
+                            <div class="flex justify-center items-center">
+                                <x-heroicon-s-plus class="w-5 h-5 text-white mr-1" />
+                                Tambah
+                            </div>
                         </button>
                     </div>
 
@@ -81,12 +103,18 @@
                                                 <button
                                                     onclick="window.location='{{ route('activities.edit', [$activity->program_id, $activity->id]) }}'"
                                                     class="bg-yellow-500 hover:bg-yellow-700 text-white text-xs px-4 py-2 rounded">
-                                                    Edit
+                                                    <div class="flex justify-center items-center">
+                                                        <x-heroicon-s-pencil class="w-4 h-4 text-white mr-1" />
+                                                        Edit
+                                                    </div>
                                                 </button>
                                                 <button
                                                     onclick="event.preventDefault(); document.getElementById('delete-form-{{ $activity->id }}').submit();"
                                                     class="bg-red-500 hover:bg-red-700 text-white text-xs px-4 py-2 rounded">
-                                                    Hapus
+                                                    <div class="flex justify-center items-center">
+                                                        <x-heroicon-s-trash class="w-4 h-4 text-white mr-1" />
+                                                        Hapus
+                                                    </div>
                                                 </button>
                                                 <form id="delete-form-{{ $activity->id }}"
                                                     action="{{ route('activities.destroy', [$activity->program_id, $activity->id]) }}"
@@ -110,26 +138,6 @@
                     @endif
                 </div>
             </div>
-
-            <!-- Map Section -->
-            @if ($program->activities->count() > 0)
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-6">
-                    <div class="p-6 text-gray-900">
-                        <h3 class="text-lg font-semibold mb-4">Peta Kegiatan</h3>
-                        <div class="bg-gray-200 h-96 rounded-lg flex items-center justify-center" id="map">
-                            {{-- Detail Program (warna per activity) --}}
-                            <x-map :coordinates="$program->activities->map(
-                                fn($a) => [
-                                    'id' => $a->id,
-                                    'lat' => $a->latitude,
-                                    'lng' => $a->longitude,
-                                    'name' => $a->name,
-                                ],
-                            )" id="map-program-{{ $program->id }}" />
-                        </div>
-                    </div>
-                </div>
-            @endif
         </div>
     </div>
 </x-app-layout>

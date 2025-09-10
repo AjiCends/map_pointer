@@ -23,10 +23,10 @@
                     @if ($programs->count() > 0)
                         <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3 px-3 sm:px-0 ">
                             @foreach ($programs as $program)
-                                <div class="border border-gray-300 rounded-lg p-4 hover:shadow-lg transition-shadow">
+                                <div class="border border-gray-300 rounded-lg p-6 hover:shadow-lg transition-shadow">
                                     <div
                                         class="container max-h-[100px] flex justify-center items-center overflow-hidden mb-3  rounded-md">
-                                        <img src="/images/dummy-program.jpg" class="max-h-screen">
+                                        <img src="/images/dummy.png" class="max-h-screen">
                                     </div>
                                     <h3 class="text-lg font-semibold mb-2">{{ $program->name }}</h3>
                                     <div class="container h-[30px] mb-5">

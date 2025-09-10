@@ -24,9 +24,22 @@
                         <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3 px-3 sm:px-0 ">
                             @foreach ($programs as $program)
                                 <div class="border border-gray-300 rounded-lg p-4 hover:shadow-lg transition-shadow">
-                                    <div
-                                        class="container max-h-[100px] flex justify-center items-center overflow-hidden mb-3  rounded-md">
-                                        <img src="/images/dummy-program.jpg" class="max-h-screen">
+                                    <div class="container max-h-[100px] flex justify-center items-center overflow-hidden mb-3 rounded-md bg-gray-100">
+                                        @php
+                                            $firstActivity = $program->activities->first();
+                                            $firstGallery = $firstActivity?->galleries->first();
+                                        @endphp
+                                        
+                                        @if($firstGallery && $firstGallery->image_url)
+                                            <img src="{{ asset('storage/' . $firstGallery->image_url) }}" 
+                                                class="w-full h-full object-cover" 
+                                                alt="Preview {{ $program->name }}"
+                                                onerror="this.parentElement.innerHTML='<span class=\'text-gray-500 text-sm\'>Gambar tidak ditemukan</span>'">
+                                        @else
+                                            <div class="w-full h-full flex items-center justify-center">
+                                                <img src="/images/dummy-program.jpg" alt="">
+                                            </div>
+                                        @endif
                                     </div>
                                     <h3 class="text-lg font-semibold mb-2">{{ $program->name }}</h3>
                                     <div class="container h-[30px] mb-5">

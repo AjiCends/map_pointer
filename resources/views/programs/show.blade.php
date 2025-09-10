@@ -79,7 +79,7 @@
                                         <div class="flex justify-between items-center">
                                             <div class="flex space-x-1">
                                                 <button
-                                                    onclick="window.location='{{ route('activities.edit', [$activity->program_id, $activity->id]) }}'"
+                                                    onclick="window.location='{{ route('activities.edit', $activity->id) }}'"
                                                     class="bg-yellow-500 hover:bg-yellow-700 text-white text-xs px-4 py-2 rounded">
                                                     Edit
                                                 </button>
@@ -89,7 +89,7 @@
                                                     Hapus
                                                 </button>
                                                 <form id="delete-form-{{ $activity->id }}"
-                                                    action="{{ route('activities.destroy', [$activity->program_id, $activity->id]) }}"
+                                                    action="{{ route('activities.destroy', $activity->id) }}"
                                                     method="POST" class="hidden">
                                                     @csrf
                                                     @method('DELETE')

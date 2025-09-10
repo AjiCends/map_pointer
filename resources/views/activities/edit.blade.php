@@ -59,7 +59,7 @@
                         </div>
 
                         <div class="flex justify-between items-center">
-                            <a href="{{ route('programs.index') }}" 
+                            <a href="{{ route('programs.show', $activity->program_id) }}" 
                                class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                                 Kembali
                             </a>

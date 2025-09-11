@@ -14,7 +14,8 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
-    
+    <link rel="stylesheet" href="style.css">
+
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -27,7 +28,7 @@
 
 <body class="font-sans antialiased ">
 
-    <div class="bg-gray-100">
+    <div class="bg-gray-50">
         @include('layouts.navigation')
 
         <!-- Page Heading -->

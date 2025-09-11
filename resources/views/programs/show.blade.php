@@ -33,7 +33,8 @@
                                     'lng' => $a->longitude,
                                     'name' => $a->name,
                                 ],
-                            )" id="map-program-{{ $program->id }}" />
+                            )" id="map-program-{{ $program->id }}" :readonly="true" />
+
                         </div>
                     </div>
                 </div>

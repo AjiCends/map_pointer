@@ -24,16 +24,16 @@
                         <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3 px-3 sm:px-0 ">
                             @foreach ($programs as $program)
                                 <div class="border border-gray-300 rounded-lg p-4 hover:shadow-lg transition-shadow">
-                                    <div class="container max-h-[100px] flex justify-center items-center overflow-hidden mb-3 rounded-md bg-gray-100">
+                                    <div
+                                        class="container max-h-[100px] flex justify-center items-center overflow-hidden mb-3 rounded-md bg-gray-100">
                                         @php
                                             $firstActivity = $program->activities->first();
                                             $firstGallery = $firstActivity?->galleries->first();
                                         @endphp
-                                        
-                                        @if($firstGallery && $firstGallery->image_url)
-                                            <img src="{{ asset('storage/' . $firstGallery->image_url) }}" 
-                                                class="w-full h-full object-cover" 
-                                                alt="Preview {{ $program->name }}"
+
+                                        @if ($firstGallery && $firstGallery->image_url)
+                                            <img src="{{ asset('storage/' . $firstGallery->image_url) }}"
+                                                class="w-full h-full object-cover" alt="Preview {{ $program->name }}"
                                                 onerror="this.parentElement.innerHTML='<span class=\'text-gray-500 text-sm\'>Gambar tidak ditemukan</span>'">
                                         @else
                                             <div class="w-full h-full flex items-center justify-center">
@@ -61,17 +61,26 @@
                                             @method('DELETE')
                                             <button type="submit"
                                                 class="bg-red-500 hover:bg-red-700 text-white text-xs px-4 py-2 rounded delete-btn ">
-                                                Hapus
+                                                <div class="flex justify-center items-center">
+                                                    <x-heroicon-s-trash class="w-4 h-4 text-white mr-1" />
+                                                    Hapus
+                                                </div>
                                             </button>
                                         </form>
                                         <div class="flex space-x-2">
                                             <a href="{{ route('programs.edit', $program) }}"
                                                 class="bg-yellow-500 hover:bg-yellow-700 text-white text-xs px-3 py-2 rounded">
-                                                Edit
+                                                <div class="flex justify-center items-center">
+                                                    <x-heroicon-s-pencil class="w-4 h-4 text-white mr-1" />
+                                                    Edit
+                                                </div>
                                             </a>
                                             <a href="{{ route('programs.show', $program) }}"
                                                 class="bg-green-500 hover:bg-green-700 text-white text-xs px-3 py-2 rounded">
-                                                Lihat
+                                                <div class="flex justify-center items-center">
+                                                    Lihat
+                                                    <x-heroicon-s-arrow-right class="w-4 h-4 text-white mr-1" />
+                                                </div>
                                             </a>
                                         </div>
 

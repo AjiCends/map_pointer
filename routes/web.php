@@ -9,8 +9,7 @@ use Illuminate\Support\Facades\Route;
 use Flasher\Notyf\Prime\NotyfInterface;
 
 
-Route::get('/', function ()
-{
+Route::get('/', function () {
     return view('welcome');
 });
 
@@ -30,8 +29,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
-Route::middleware('auth')->group(function ()
-{
+Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -66,6 +64,8 @@ Route::middleware('auth')->group(function ()
         ->name('gallery.update');
     Route::delete('/activities/{activity}/gallery/{gallery}', [GalleryController::class, 'destroy'])
         ->name('gallery.destroy');
+    Route::get('/activities/{activity}/gallery/{gallery}/download', [App\Http\Controllers\GalleryController::class, 'download'])
+        ->name('gallery.download');
 });
 
 require __DIR__ . '/auth.php';

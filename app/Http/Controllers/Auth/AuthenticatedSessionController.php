@@ -30,7 +30,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        notyf()->addSuccess('Welcome back, ' . Auth::user()->name . '!');
+        notyf()->addSuccess('Selamat Datang, ' . Auth::user()->name . '!');
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

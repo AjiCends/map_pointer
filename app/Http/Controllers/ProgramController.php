@@ -11,18 +11,33 @@ class ProgramController extends Controller
 {
     /**
      * Display a listing of the resource.
-    */
-    
-
+     */
     public function index()
     {
-        $programs = Program::with('activities')
+        $programs = Program::with([
+            'activities.galleries' => function ($query) {
+                $query->orderBy('created_at', 'asc')->limit(1);
+            }
+        ])
             ->where('user_id', Auth::id())
-            ->with(['activities.galleries' => function($query) {
-                $query->limit(1);
-            }])
             ->latest()
             ->paginate(6);
+
+        foreach ($programs as $program) {
+            $firstPhoto = null;
+            $earliestDate = null;
+
+            foreach ($program->activities as $activity) {
+                foreach ($activity->galleries as $gallery) {
+                    if ($earliestDate === null || $gallery->created_at < $earliestDate) {
+                        $earliestDate = $gallery->created_at;
+                        $firstPhoto = $gallery;
+                    }
+                }
+            }
+
+            $program->first_photo = $firstPhoto;
+        }
 
         return view('programs.index', compact('programs'));
     }
@@ -53,7 +68,6 @@ class ProgramController extends Controller
 
         notyf()->success('Program berhasil ditambahkan!');
         return redirect()->route('programs.index');
-
     }
 
     /**
@@ -62,11 +76,13 @@ class ProgramController extends Controller
     public function show(Program $program)
     {
         if ($program->user_id !== Auth::id()) {
-            abort(403);
+            notyf()
+                ->addError('Anda tidak memiliki akses ke program ini.');
+            return redirect()->route('programs.index');
         }
 
         $program->load('activities.galleries');
-        
+
         return view('programs.show', compact('program'));
     }
 
@@ -87,8 +103,7 @@ class ProgramController extends Controller
      */
     public function update(Request $request, Program $program)
     {
-        if ($program->user_id !== Auth::id())
-        {
+        if ($program->user_id !== Auth::id()) {
             abort(403);
         }
 

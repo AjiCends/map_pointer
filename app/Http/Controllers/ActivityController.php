@@ -47,7 +47,7 @@ class ActivityController extends Controller
             'longitude' => $request->longitude,
         ]);
 
-        notyf('Activitas berhasil dibuat!');
+        notyf('Aktivitas berhasil dibuat!');
         return redirect()->route('programs.show', $program->id);
     }
 

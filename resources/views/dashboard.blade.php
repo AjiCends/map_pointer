@@ -10,6 +10,7 @@
     <!-- Parent harus punya tinggi fix -->
     <div class="py-2 sm:py-12 overflow-hidden" style="height: calc(100vh - 64px);">
         <div class="max-w-7xl sm:mx-auto sm:px-6 lg:px-8 mx-4 h-full">
+            
             {{-- Login Alert --}}
             @if (session('success'))
                 <script>

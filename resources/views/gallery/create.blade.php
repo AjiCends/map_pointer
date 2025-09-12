@@ -32,7 +32,8 @@
                             Silakan Unggah Foto
                         </label>
                         <label for="photos" class="block text-xs text-gray-500 mb-3 font-light">
-                            Maksimal 10 foto, masing-masing maksimal 3MB. Klik untuk menambah foto lagi.
+                            Maksimal 10 foto, otomatis dikompres untuk mengoptimalkan upload. Klik untuk menambah foto
+                            lagi.
                         </label>
 
                         <!-- Input untuk memilih foto -->
@@ -43,6 +44,17 @@
                                    file:text-sm file:font-semibold
                                    file:bg-blue-50 file:text-blue-700
                                    hover:file:bg-blue-100">
+
+                        <!-- Progress Bar -->
+                        <div id="compressionProgress" class="mt-3 hidden">
+                            <div class="text-sm text-gray-600 mb-1">
+                                Mengkompres foto: <span id="progressText">0/0</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div id="progressBar" class="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                                    style="width: 0%"></div>
+                            </div>
+                        </div>
 
                         <!-- Info jumlah foto -->
                         <div id="photoCount" class="mt-2 text-sm text-gray-600 hidden">
@@ -65,107 +77,181 @@
         </div>
     </div>
 
+    <!-- Include Compressor.js from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/compressorjs/1.2.1/compressor.min.js"
+        onload="console.log('Compressor.js loaded successfully')" onerror="console.error('Failed to load Compressor.js')">
+    </script>
+
     <!-- JavaScript -->
     <script>
-        let selectedFiles = [];
-        const maxFiles = 10;
+        document.addEventListener('DOMContentLoaded', function() {
+            let selectedFiles = [];
+            const maxFiles = 10;
+            const maxFileSize = 10 * 1024 * 1024;
+            let isCompressing = false;
 
-        const photosInput = document.getElementById('photos');
-        const finalPhotos = document.getElementById('finalPhotos');
-        const previewContainer = document.getElementById('previewContainer');
-        const previewList = document.getElementById('previewList');
-        const photoCount = document.getElementById('photoCount');
-        const currentCount = document.getElementById('currentCount');
-        const submitBtn = document.getElementById('submitBtn');
-        const uploadCount = document.getElementById('uploadCount');
+            const $ = id => document.getElementById(id);
+            const photosInput = $('photos');
+            const finalPhotos = $('finalPhotos');
+            const previewContainer = $('previewContainer');
+            const previewList = $('previewList');
+            const photoCount = $('photoCount');
+            const currentCount = $('currentCount');
+            const submitBtn = $('submitBtn');
+            const uploadCount = $('uploadCount');
+            const compressionProgress = $('compressionProgress');
+            const progressBar = $('progressBar');
+            const progressText = $('progressText');
 
-        photosInput.addEventListener('change', handleFileSelect);
+            photosInput.addEventListener('change', handleFileSelect);
 
-        function handleFileSelect(event) {
-            const files = Array.from(event.target.files);
+            async function handleFileSelect(event) {
+                if (isCompressing) return alert('Sedang memproses foto. Mohon tunggu sebentar.') || (event
+                    .target.value = '');
 
-            files.forEach(file => {
-                const isDuplicate = selectedFiles.some(f => f.name === file.name && f.size === file.size);
-                if (!isDuplicate) {
-                    selectedFiles.push(file);
-                    createPreview(file, selectedFiles.length - 1);
+                const files = Array.from(event.target.files).filter(file => {
+                    if (file.size > maxFileSize) return alert(
+                        `File ${file.name} terlalu besar. Maksimal ${formatFileSize(maxFileSize)}.`
+                        );
+                    if (selectedFiles.some(f => f.name === file.name && f.size === file.size))
+                    return false;
+                    if (selectedFiles.length >= maxFiles) return alert(`Maksimal ${maxFiles} foto.`);
+                    return true;
+                });
+
+                if (!files.length) return event.target.value = '';
+
+                isCompressing = true;
+                photosInput.disabled = true;
+                compressionProgress.classList.remove('hidden');
+
+                try {
+                    await Promise.all(files.map(async (file, i) => {
+                        progressText.textContent = `${i + 1}/${files.length} - ${file.name}`;
+                        progressBar.style.width = `${((i + 1) / files.length) * 100}%`;
+
+                        const compressed = await compressImage(file);
+                        selectedFiles.push(compressed);
+                        createPreview(compressed, selectedFiles.length - 1, file.size);
+                    }));
+                } catch (error) {
+                    alert('Error mengkompres foto: ' + error.message);
+                } finally {
+                    isCompressing = false;
+                    photosInput.disabled = false;
+                    compressionProgress.classList.add('hidden');
+                    event.target.value = '';
+                    updateUI();
+                }
+            }
+
+            function compressImage(file) {
+                return new Promise(resolve => {
+                    if (typeof Compressor === 'undefined') return resolve(file);
+
+                    new Compressor(file, {
+                        quality: file.size > 3 * 1024 * 1024 ? 0.6 : 0.8,
+                        maxWidth: 1920,
+                        maxHeight: 1080,
+                        mimeType: 'image/jpeg',
+                        convertSize: 2 * 1024 * 1024,
+                        convertTypes: ['image/png', 'image/webp'],
+                        success: compressed => {
+                            const ext = compressed.type === 'image/jpeg' ? 'jpg' : file.name
+                                .split('.').pop();
+                            const name = file.name.substring(0, file.name.lastIndexOf('.'));
+                            resolve(new File([compressed], `${name}_compressed.${ext}`, {
+                                type: compressed.type,
+                                lastModified: Date.now()
+                            }));
+                        },
+                        error: () => resolve(file)
+                    });
+                });
+            }
+
+            function createPreview(file, index, originalSize) {
+                const item = document.createElement('div');
+                item.className = 'flex-shrink-0 relative';
+                item.dataset.index = index;
+
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const size = formatFileSize(file.size);
+                    const compressed = file.name.includes('_compressed');
+                    const ratio = originalSize ? Math.round((1 - file.size / originalSize) * 100) : 0;
+                    const sizeInfo = compressed && originalSize ? `${size} (-${ratio}%)` : size;
+
+                    item.innerHTML = `
+                        <div class="relative group">
+                            <img src="${e.target.result}" class="w-24 h-24 object-cover rounded-lg border-2 border-gray-200">
+                            <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white text-xs p-1 rounded-b-lg truncate">
+                                ${sizeInfo} ${compressed ? '📦' : ''}
+                            </div>
+                            <button type="button" class="remove-btn absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold" data-index="${index}">×</button>
+                        </div>`;
+                    setTimeout(updateUI, 50);
+                };
+                reader.onerror = () => item.innerHTML =
+                    `<div class="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center"><span class="text-xs text-gray-500">Error</span></div>`;
+
+                previewList.appendChild(item);
+                reader.readAsDataURL(file);
+            }
+
+            function removeFile(index) {
+                selectedFiles.splice(index, 1);
+                document.querySelector(`[data-index="${index}"]`)?.remove();
+
+                previewList.querySelectorAll('[data-index]').forEach((item, i) => {
+                    item.dataset.index = i;
+                    item.querySelector('.remove-btn')?.setAttribute('data-index', i);
+                });
+                updateUI();
+            }
+
+            previewList.addEventListener('click', e => {
+                if (e.target.classList.contains('remove-btn')) {
+                    removeFile(parseInt(e.target.getAttribute('data-index')));
                 }
             });
 
-            updateUI();
-            event.target.value = '';
-        }
+            function updateUI() {
+                const count = selectedFiles.length;
+                const canSubmit = count > 0 && !isCompressing;
 
-        function createPreview(file, index) {
-            const previewItem = document.createElement('div');
-            previewItem.className = 'flex-shrink-0 relative';
-            previewItem.dataset.index = index;
+                [previewContainer, photoCount].forEach(el => el?.classList.toggle('hidden', count === 0));
+                uploadCount?.classList.toggle('hidden', count === 0);
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewItem.innerHTML = `
-                    <div class="relative group">
-                        <img src="${e.target.result}" 
-                             class="w-24 h-24 object-cover rounded-lg border-2 border-gray-200">
-                        <button type="button" 
-                                onclick="removeFile(${index})"
-                                class="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
-                            ×
-                        </button>
-                    </div>
-                `;
+                submitBtn.disabled = !canSubmit;
+                if (currentCount) currentCount.textContent = count;
+                if (uploadCount) uploadCount.textContent = `(${count})`;
+
+                const dt = new DataTransfer();
+                selectedFiles.forEach(file => dt.items.add(file));
+                finalPhotos.files = dt.files;
+            }
+
+            const formatFileSize = bytes => {
+                if (!bytes) return '0 Bytes';
+                const k = 1024,
+                    sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
             };
-            reader.readAsDataURL(file);
 
-            previewList.appendChild(previewItem);
-        }
+            $('uploadForm').addEventListener('submit', e => {
+                if (!selectedFiles.length) return e.preventDefault() || alert('Pilih minimal 1 foto.');
+                if (isCompressing) return e.preventDefault() || alert('Masih mengkompres foto.');
+                if (selectedFiles.length > 5 && !confirm(`Upload ${selectedFiles.length} foto?`)) {
+                    return e.preventDefault();
+                }
 
-        function removeFile(index) {
-            selectedFiles.splice(index, 1);
-            const previewItem = document.querySelector(`[data-index="${index}"]`);
-            if (previewItem) previewItem.remove();
-
-            // update index tombol delete
-            const items = previewList.querySelectorAll('[data-index]');
-            items.forEach((item, newIndex) => {
-                item.dataset.index = newIndex;
-                const btn = item.querySelector('button');
-                if (btn) btn.setAttribute('onclick', `removeFile(${newIndex})`);
-            });
-
-            updateUI();
-        }
-
-        function updateUI() {
-            const count = selectedFiles.length;
-
-            if (count > 0) {
-                previewContainer.classList.remove('hidden');
-                photoCount.classList.remove('hidden');
-                uploadCount.classList.remove('hidden');
-                submitBtn.disabled = false;
-            } else {
-                previewContainer.classList.add('hidden');
-                photoCount.classList.add('hidden');
-                uploadCount.classList.add('hidden');
                 submitBtn.disabled = true;
-            }
-
-            currentCount.textContent = count;
-            uploadCount.textContent = `(${count})`;
-
-            // isi input hidden agar Laravel bisa tangkap di $request->file('photos')
-            const dt = new DataTransfer();
-            selectedFiles.forEach(file => dt.items.add(file));
-            finalPhotos.files = dt.files;
-        }
-
-        // Validasi sebelum submit
-        document.getElementById('uploadForm').addEventListener('submit', function(e) {
-            if (selectedFiles.length === 0) {
-                e.preventDefault();
-                alert('Silakan pilih minimal 1 foto.');
-            }
+                submitBtn.innerHTML =
+                    `Mengupload ${selectedFiles.length} foto... <span class="animate-pulse">⏳</span>`;
+                photosInput.disabled = true;
+            });
         });
     </script>
 </x-app-layout>

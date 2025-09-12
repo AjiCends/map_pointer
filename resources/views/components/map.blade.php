@@ -1,4 +1,4 @@
-@props(['coordinates' => [], 'id' => 'map', 'groupByProgram' => false, 'readonly' => false])
+@props(['coordinates' => [], 'id' => 'map', 'groupByProgram' => false, 'interactive' => false])
 
 <div class="relative">
     <div id="{{ $id }}" class="w-full h-96 rounded-lg shadow"></div>
@@ -7,17 +7,17 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const coordinates = @json($coordinates);
-        const readonly = @json($readonly);
+        const interactive = @json($interactive);
 
         // Init Map
         const map = L.map("{{ $id }}", {
             zoomControl: true,
-            dragging: !readonly, // nonaktif drag
-            scrollWheelZoom: !readonly,
-            doubleClickZoom: !readonly,
-            boxZoom: !readonly,
-            keyboard: !readonly,
-            touchZoom: !readonly
+            dragging: true, // Map movement is always allowed
+            scrollWheelZoom: true,
+            doubleClickZoom: true,
+            boxZoom: true,
+            keyboard: true,
+            touchZoom: true
         }).setView([-8.1725, 113.7008], 13);
 
         // Base Tile
@@ -44,11 +44,11 @@
             });
         }
 
-        // Kalau readonly → jangan jalankan fitur interaktif
-        if (readonly) return;
+        // Hanya jalankan fitur marker/click jika interactive = true
+        if (!interactive) return;
 
         // ======================
-        // Fitur interaktif (hanya kalau !readonly)
+        // Fitur interaktif (hanya untuk create/edit)
         // ======================
         let activeMarker;
 

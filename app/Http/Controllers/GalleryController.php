@@ -7,7 +7,7 @@ use App\Models\Gallery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
-use Intervention\Image\Laravel\Facades\Image;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class GalleryController extends Controller
@@ -43,84 +43,63 @@ class GalleryController extends Controller
      */
     public function store(Request $request, Activity $activity)
     {
-        ini_set('memory_limit', '512M');
-        set_time_limit(300);
-
         if ($activity->program->user_id !== Auth::id()) {
             abort(403);
         }
 
         $request->validate([
             'photos' => 'required|array|max:10',
-            'photos.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:20480'
+            'photos.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120'
         ]);
+
+        $uploadedCount = 0;
+        $skippedCount = 0;
+        $errors = [];
 
         foreach ($request->file('photos') as $index => $photo) {
             try {
-                if ($index % 3 == 0) {
-                    gc_collect_cycles();
-                }
-
-                $targetSize = 3 * 1024 * 1024;
-                $originalSize = $photo->getSize();
-
-                if ($originalSize <= $targetSize) {
-                    $path = $photo->store('gallery', 'public');
-                } else {
-                    $image = Image::read($photo);
-
-                    $maxWidth = 1920;
-                    $maxHeight = 1080;
-
-                    if ($image->width() > $maxWidth || $image->height() > $maxHeight) {
-                        $image->scale(width: $maxWidth, height: $maxHeight);
-                    }
-
-                    $quality = 80;
-                    $compressedData = null;
-                    $attempts = 0;
-                    $maxAttempts = 5;
-
-                    do {
-                        $compressedData = $image->toJpeg($quality);
-                        $compressedSize = strlen($compressedData);
-
-                        if ($compressedSize > $targetSize && $attempts < $maxAttempts) {
-                            $quality -= 15;
-                            $attempts++;
-                        } else {
-                            break;
-                        }
-                    } while ($quality > 30);
-
-                    $filename = 'gallery/' . uniqid() . '.jpg';
-                    Storage::disk('public')->put($filename, $compressedData);
-                    $path = $filename;
-
-                    unset($image);
-                    unset($compressedData);
-                }
+                $path = $photo->store('gallery', 'public');
 
                 Gallery::create([
                     'activity_id' => $activity->id,
                     'image_url' => $path
                 ]);
-            } catch (\Throwable $e) {
-                try {
-                    $path = $photo->store('gallery', 'public');
 
-                    Gallery::create([
-                        'activity_id' => $activity->id,
-                        'image_url' => $path
-                    ]);
-                } catch (\Exception $fallbackError) {
-                    continue;
-                }
+                $uploadedCount++;
+
+            } catch (\Throwable $e) {
+                $skippedCount++;
+                $errors[] = "Foto ke-" . ($index + 1) . " (" . $photo->getClientOriginalName() . "): " . $e->getMessage();
+
+                Log::error('Gallery upload error', [
+                    'activity_id' => $activity->id,
+                    'file_name' => $photo->getClientOriginalName(),
+                    'file_size' => $photo->getSize(),
+                    'error' => $e->getMessage()
+                ]);
+
+                continue;
             }
         }
 
-        notyf('Foto berhasil diupload!');
-        return redirect()->route('gallery.index', $activity);
+        if ($uploadedCount > 0) {
+            $message = $uploadedCount . ' foto berhasil diupload!';
+            if ($skippedCount > 0) {
+                $message .= ' (' . $skippedCount . ' foto dilewati karena error)';
+            }
+            notyf()->success($message);
+            return redirect()->route('gallery.index', $activity);
+        } else {
+            $errorMessage = 'Tidak ada foto yang berhasil diupload.';
+            if (!empty($errors)) {
+                $errorMessage .= ' Error: ' . implode(', ', array_slice($errors, 0, 2));
+                if (count($errors) > 2) {
+                    $errorMessage .= ' dan ' . (count($errors) - 2) . ' error lainnya.';
+                }
+            }
+            notyf()->error($errorMessage);
+            return redirect()->route('gallery.create', $activity);
+        }
     }
 
     /**
@@ -157,10 +136,11 @@ class GalleryController extends Controller
             abort(404, 'File not found');
         }
 
-        // Nama file custom, misalnya: kegiatan-nama_aktivitas-timestamp.jpg
         $extension = pathinfo($path, PATHINFO_EXTENSION);
         $fileName = 'kegiatan-' . Str::slug($activity->name) . '-' . now()->format('YmdHis') . '.' . $extension;
+        
+        $fullPath = storage_path('app/public/' . $path);
 
-        return Storage::disk('public')->download($path, $fileName);
+        return response()->download($fullPath, $fileName);
     }
 }

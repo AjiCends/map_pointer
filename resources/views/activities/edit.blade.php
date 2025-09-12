@@ -19,7 +19,7 @@
                                 Pilih Lokasi di Peta
                             </label>
                             <p class="text-xs text-gray-500 mb-2 text-center">Klik pada peta untuk memilih lokasi.</p>
-                            <x-map id="map" :coordinates="[['lat' => $activity->latitude, 'lng' => $activity->longitude]]" />
+                            <x-map id="map" :coordinates="[['lat' => $activity->latitude, 'lng' => $activity->longitude]]" :interactive="true" />
 
                         </div>
 

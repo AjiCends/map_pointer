@@ -26,18 +26,13 @@
                                 <div class="border border-gray-300 rounded-lg p-4 hover:shadow-lg transition-shadow">
                                     <div
                                         class="container max-h-[100px] flex justify-center items-center overflow-hidden mb-3 rounded-md bg-gray-100">
-                                        @php
-                                            $firstActivity = $program->activities->first();
-                                            $firstGallery = $firstActivity?->galleries->first();
-                                        @endphp
-
-                                        @if ($firstGallery && $firstGallery->image_url)
-                                            <img src="{{ asset('storage/' . $firstGallery->image_url) }}"
+                                        @if ($program->first_photo && $program->first_photo->image_url)
+                                            <img src="{{ asset('storage/' . $program->first_photo->image_url) }}"
                                                 class="w-full h-full object-cover" alt="Preview {{ $program->name }}"
                                                 onerror="this.parentElement.innerHTML='<span class=\'text-gray-500 text-sm\'>Gambar tidak ditemukan</span>'">
                                         @else
                                             <div class="w-full h-full flex items-center justify-center">
-                                                <img src="/images/dummy.png" alt="">
+                                                <img src="/images/dummy.png" alt="No image available">
                                             </div>
                                         @endif
                                     </div>

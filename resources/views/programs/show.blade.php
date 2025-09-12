@@ -21,7 +21,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Map Section -->
             @if ($program->activities->count() > 0)
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-6">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
                         <h3 class="text-xl font-semibold mb-4 text-center">Peta Kegiatan</h3>
                         <div class="h-48 sm:h-96 rounded-lg" id="map">
@@ -33,7 +33,7 @@
                                     'lng' => $a->longitude,
                                     'name' => $a->name,
                                 ],
-                            )" id="map-program-{{ $program->id }}" :readonly="true" />
+                            )" id="map-program-{{ $program->id }}" :interactive="false" />
 
                         </div>
                     </div>
@@ -60,13 +60,24 @@
                 <div class="p-6 text-gray-900">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-lg font-semibold">Kegiatan dalam Program</h3>
-                        <button onclick="window.location='{{ route('activities.create', $program) }}'"
-                            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                            <div class="flex justify-center items-center">
-                                <x-heroicon-s-plus class="w-5 h-5 text-white mr-1" />
-                                Tambah
-                            </div>
-                        </button>
+                        <div class="flex space-x-2">
+                            @if ($program->activities->count() >= 1)
+                                <button onclick="window.location='{{ route('routes.index', $program) }}'"
+                                    class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
+                                    <div class="flex justify-center items-center">
+                                        <x-heroicon-s-map class="w-5 h-5 text-white mr-1" />
+                                        Rute
+                                    </div>
+                                </button>
+                            @endif
+                            <button onclick="window.location='{{ route('activities.create', $program) }}'"
+                                class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                <div class="flex justify-center items-center">
+                                    <x-heroicon-s-plus class="w-5 h-5 text-white mr-1" />
+                                    Tambah
+                                </div>
+                            </button>
+                        </div>
                     </div>
 
                     @if ($program->activities->count() > 0)

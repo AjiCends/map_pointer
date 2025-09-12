@@ -109,7 +109,6 @@
             map.fitBounds(bounds, {
                 padding: [50, 50]
             });
-            map.setMaxBounds(bounds); // 🔒 restrict map agar tidak keluar area marker
         } else {
             map.setView([-8.1725, 113.7008], 13);
         }

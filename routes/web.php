@@ -4,29 +4,18 @@ use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\ProfileController;
-use App\Models\Program;
+use App\Http\Controllers\RouteController;
 use Illuminate\Support\Facades\Route;
-use Flasher\Notyf\Prime\NotyfInterface;
 
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Dashboard Default
-// Route::get('/dashboard', function ()
-// {
-//     $program = Program::all();
-//     return view('dashboard', compact('program'));
-// })->middleware(['auth', 'verified'])->name('dashboard');
-
-// Dashboard with Programs and Activities
-Route::get('/dashboard', function () {
-    // Ambil semua program beserta activities-nya
-    $programs = Program::with('activities')->get();
-
-    return view('dashboard', compact('programs'));
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Dashboard with user-specific data
+Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 
 Route::middleware('auth')->group(function () {
@@ -64,8 +53,14 @@ Route::middleware('auth')->group(function () {
         ->name('gallery.update');
     Route::delete('/activities/{activity}/gallery/{gallery}', [GalleryController::class, 'destroy'])
         ->name('gallery.destroy');
-    Route::get('/activities/{activity}/gallery/{gallery}/download', [App\Http\Controllers\GalleryController::class, 'download'])
+    Route::get('/activities/{activity}/gallery/{gallery}/download', [GalleryController::class, 'download'])
         ->name('gallery.download');
+
+    // Route Planner routes
+    Route::get('/programs/{program}/routes', [RouteController::class, 'index'])
+        ->name('routes.index');
+    Route::post('/programs/{program}/routes/generate', [RouteController::class, 'generateRoute'])
+        ->name('routes.generate');
 });
 
 require __DIR__ . '/auth.php';

@@ -20,6 +20,8 @@
             touchZoom: true
         }).setView([-8.1725, 113.7008], 13);
 
+        window.mapInstance = map;
+
         // Base Tile
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
             minZoom: 7,
@@ -92,5 +94,11 @@
                 lngInput.value = lng.toFixed(6);
             }
         }
+
+        window.placeMarkerOnMap = function(lat, lng) {
+            if (interactive) {
+                placeMarker(lat, lng);
+            }
+        };
     });
 </script>

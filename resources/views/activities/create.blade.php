@@ -17,7 +17,7 @@
                             <label class="block text-sm font-medium text-gray-700 text-center">
                                 Pilih Lokasi di Peta
                             </label>
-                            <p class="text-xs text-gray-500 mb-2 text-center">Klik pada peta untuk memilih lokasi.</p>
+                            <p class="text-xs text-gray-500 mb-2 text-center">Klik pada peta untuk mengubah lokasi.</p>
                             <x-map id="map" :interactive="true" />
                         </div>
 
@@ -75,4 +75,58 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        
+                        document.getElementById('latitude').value = lat.toFixed(6);
+                        document.getElementById('longitude').value = lng.toFixed(6);
+                        
+                        updateMapLocation(lat, lng);
+                    },
+                    function(error) {
+                        let errorMessage = '';
+                        switch(error.code) {
+                            case 1:
+                                errorMessage = 'User denied geolocation permission';
+                                break;
+                            case 2:
+                                errorMessage = 'Position unavailable';
+                                break;
+                            case 3:
+                                errorMessage = 'Geolocation timeout';
+                                break;
+                            default:
+                                errorMessage = 'Unknown geolocation error';
+                                break;
+                        }
+                        console.log('Auto-location failed:', errorMessage);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 8000,
+                        maximumAge: 60000
+                    }
+                );
+            } else {
+                console.log('Geolocation not supported by browser');
+            }
+        });
+
+        function updateMapLocation(lat, lng) {
+            setTimeout(function() {
+                if (typeof window.placeMarkerOnMap === 'function') {
+                    window.placeMarkerOnMap(lat, lng);
+                }
+                if (typeof window.mapInstance !== 'undefined') {
+                    window.mapInstance.setView([lat, lng], 15);
+                }
+            }, 500);
+        }
+    </script>
 </x-app-layout>

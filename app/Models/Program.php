@@ -13,6 +13,8 @@ class Program extends Model
         'user_id',
         'name',
         'description',
+        'is_pin',
+        'pin_at',
     ];
 
     public function user()

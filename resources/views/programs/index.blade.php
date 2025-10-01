@@ -23,7 +23,15 @@
                     @if ($programs->count() > 0)
                         <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3 px-3 sm:px-0 ">
                             @foreach ($programs as $program)
-                                <div class="border border-gray-300 rounded-lg p-4 hover:shadow-lg transition-shadow">
+                                <div
+                                    class="relative border border-gray-300 rounded-lg p-4 hover:shadow-lg transition-shadow">
+                                    @if ($program->is_pin)
+                                        <div class="absolute top-1 right-1">
+                                            <div class="bg-white rounded-full shadow-md p-2">
+                                                <x-heroicon-s-bookmark class="w-5 h-5 text-blue-600" />
+                                            </div>
+                                        </div>
+                                    @endif
                                     <div
                                         class="container max-h-[100px] flex justify-center items-center overflow-hidden mb-3 rounded-md bg-gray-100">
                                         @if ($program->first_photo && $program->first_photo->image_url)

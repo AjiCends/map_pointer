@@ -13,29 +13,39 @@ class DashboardController extends Controller
     public function index()
     {
         $userId = Auth::id();
-        
+
         $currentUser = Auth::user();
-        
+
         $programs = Program::with(['activities.galleries'])
             ->where('user_id', $userId)
-            ->where('is_pin', 1)
             ->get();
 
-        // $allPrograms = Program::with(['activities.galleries'])
-        // ->where('is_pin', 1)
-        // ->get();
+        $pined_program = Program::with(['activities.galleries'])
+            ->where('user_id', $userId)
+            ->where('is_pin', true)
+            ->orderBy('pin_at', 'desc')
+            ->limit(1)
+            ->get();
+
+        $allPrograms = Program::with(['activities.galleries'])->get();
+
+        $activities = Activity::with('program')
+            ->whereHas('program', function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })
+            ->get();
 
         if (config('app.debug')) {
             Log::info('Dashboard Debug Info', [
                 'current_user_id' => $userId,
                 'current_user_name' => $currentUser->name ?? 'Unknown',
                 'user_programs_count' => $programs->count(),
-                // 'all_programs_count' => $allPrograms->count(),
+                'all_programs_count' => $allPrograms->count(),
                 'user_program_names' => $programs->pluck('name')->toArray(),
-                // 'all_program_users' => $allPrograms->pluck('user_id', 'name')->toArray()
+                'all_program_users' => $allPrograms->pluck('user_id', 'name')->toArray()
             ]);
         }
 
-        return view('dashboard', compact('programs'));
+        return view('dashboard', compact('programs', 'activities', 'pined_program'));
     }
 }

@@ -25,6 +25,7 @@
                         <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                             @foreach ($activities as $activity)
                                 <div class="border border-gray-300 rounded-lg p-4 hover:shadow-lg transition-shadow">
+
                                     <h3 class="text-lg font-semibold mb-2">{{ $activity->name }}</h3>
                                     <p class="text-gray-600 mb-3">{{ Str::limit($activity->description, 100) }}</p>
 

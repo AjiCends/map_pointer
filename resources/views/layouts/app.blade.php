@@ -45,6 +45,19 @@
             {{ $slot }}
         </main>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const scrollPos = sessionStorage.getItem("scrollPosition");
+            if (scrollPos) {
+                window.scrollTo(0, scrollPos);
+                sessionStorage.removeItem("scrollPosition");
+            }
+        });
+
+        window.addEventListener("beforeunload", function() {
+            sessionStorage.setItem("scrollPosition", window.scrollY);
+        });
+    </script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
     <!-- Geocoder CSS -->

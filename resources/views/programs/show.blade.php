@@ -83,7 +83,16 @@
                     @if ($program->activities->count() > 0)
                         <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                             @foreach ($program->activities as $activity)
-                                <div class="border border-gray-300 rounded-lg p-4 hover:shadow-lg transition-shadow ">
+                                <div class="relative border border-gray-300 rounded-lg p-4 hover:shadow-lg transition-shadow ">
+                                    @if ($activity->order_num)
+                                        <div class="absolute -top-3 -right-3">
+                                            <div
+                                                class="bg-white rounded-full shadow-md w-8 h-8 flex items-center justify-center text-sm font-semibold text-gray-700">
+                                                {{ $activity->order_num }}
+                                            </div>
+                                        </div>
+                                    @endif
+
                                     <h4 class="text-md font-semibold mb-2">{{ $activity->name }}</h4>
 
                                     <div class="text-sm text-gray-600 mb-5">

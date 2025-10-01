@@ -81,7 +81,18 @@ class ProgramController extends Controller
             return redirect()->route('programs.index');
         }
 
-        $program->load('activities.galleries');
+        // $program->load('activities.galleries');
+        $program->load([
+            'activities' => function ($query) {
+                $query->orderByRaw('
+                    CASE 
+                        WHEN order_num IS NULL THEN 1 
+                        ELSE 0 
+                    END, order_num ASC, created_at ASC
+                ');
+            },
+            'activities.galleries'
+        ]);
 
         return view('programs.show', compact('program'));
     }
@@ -110,16 +121,27 @@ class ProgramController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string|max:1000',
+            'is_pin' => 'required|boolean',
         ]);
 
-        $program->update([
+        $data = [
             'name' => $request->name,
             'description' => $request->description,
-        ]);
+            'is_pin' => $request->boolean('is_pin'),
+        ];
+
+        if ($request->boolean('is_pin')) {
+            $data['pin_at'] = now();
+        } else {
+            $data['pin_at'] = null;
+        }
+
+        $program->update($data);
 
         notyf()->success('Program berhasil diperbarui!');
         return redirect()->route('programs.index');
     }
+
 
     /**
      * Remove the specified resource from storage.

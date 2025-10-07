@@ -80,10 +80,23 @@
                 color: "blue",
                 weight: 2,
                 opacity: 1,
-                fillOpacity: 0.8
+                fillOpacity: 1
             }).addTo(map);
 
-            const popupContent = `<b>${coord.name}</b>`;
+            // const popupContent = `<b>${coord.name}</b>`;
+            const popupContent = `
+                <div style="min-width: 140px;">
+                    <b>${coord.name}</b><br>
+                    <button 
+                        onclick="window.open('https://www.google.com/maps?q=${coord.lat},${coord.lng}', '_blank')" 
+                        style="margin-top: 6px; display: flex; align-items: center; gap: 4px; background-color: #2563eb; color: white; border: none; border-radius: 6px; padding: 4px 8px; cursor: pointer; font-size: 11px;"
+                    >
+                        🔗 GMaps
+                    </button>
+                </div>
+            `;
+
+
 
             const popup = L.popup({
                     autoClose: false, // penting: jangan auto close popup saat popup lain dibuka

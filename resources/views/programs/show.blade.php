@@ -106,7 +106,13 @@
                                         <p><strong>Koordinat:</strong></p>
                                         <p>Lat: {{ $activity->latitude }}</p>
                                         <p>Lng: {{ $activity->longitude }}</p>
+                                        <a href="https://www.google.com/maps?q={{ $activity->latitude }},{{ $activity->longitude }}"
+                                            target="_blank"
+                                            class="inline-flex items-center mt-1 text-blue-600 hover:text-blue-800">
+                                            🔗 Buka di Google Map
+                                        </a>
                                     </div>
+
 
                                     <div class="text-sm text-gray-500 flex justify-between">
                                         <a href="{{ route('gallery.index', $activity->id) }}">

@@ -18,7 +18,7 @@ class RouteController extends Controller
             abort(403);
         }
 
-        $activities = $program->activities()->get();
+        $activities = $program->activities()->orderBy('order_num','asc')->get();
         
         return view('routes.index', compact('program', 'activities'));
     }

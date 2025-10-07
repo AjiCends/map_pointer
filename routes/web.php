@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\FullMapController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\ProfileController;
@@ -16,6 +17,9 @@ Route::get('/', function () {
 Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+Route::get('/map/full', [FullMapController::class, 'index'])->name('full_map.index');
+
 
 
 Route::middleware('auth')->group(function () {

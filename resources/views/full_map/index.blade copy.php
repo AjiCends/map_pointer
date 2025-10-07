@@ -29,35 +29,22 @@
 
     {{-- CONTROL PANEL --}}
     <div class="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-3 space-y-2 z-[1000] w-64">
-        <!-- Input Pencarian -->
         <input id="searchInput" type="text" placeholder="Cari nama kegiatan..."
             class="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring focus:ring-blue-400">
 
-        <!-- Tombol Cari -->
-        <button id="searchBtn"
-            class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 text-sm font-medium focus:ring-4 focus:ring-blue-300">
+        <button id="searchBtn" class="w-full bg-blue-600 text-white py-1.5 rounded-md hover:bg-blue-700 text-sm">
             🔍 Cari Marker
         </button>
 
-        <!-- Tombol Tampilkan Semua Popup -->
-        <button id="openAllBtn"
-            class="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 text-sm font-medium focus:ring-4 focus:ring-green-300">
+        <button id="togglePopupBtn" class="w-full bg-gray-700 text-white py-1.5 rounded-md hover:bg-gray-800 text-sm">
             💬 Tampilkan Semua Popup
         </button>
 
-        <!-- Tombol Tutup Semua Popup -->
-        <button id="closeAllBtn"
-            class="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 text-sm font-medium focus:ring-4 focus:ring-red-300">
-            ❌ Tutup Semua Popup
-        </button>
-
-        <!-- Tombol Kembali -->
         <button onclick="window.location.href='{{ route('dashboard') }}'"
-            class="w-full bg-gray-600 text-white py-2 rounded-md hover:bg-gray-700 text-sm font-medium focus:ring-4 focus:ring-gray-300">
+            class="w-full bg-red-500 text-white py-1.5 rounded-md hover:bg-red-600 text-sm">
             ⬅️ Kembali ke Beranda
         </button>
     </div>
-
 
     <script>
         const coordinates = @json($coordinates);
@@ -100,6 +87,19 @@
         if (coordinates.length > 0) map.fitBounds(bounds, {
             padding: [40, 40]
         });
+
+        // Search marker (tetap sama)
+        // document.getElementById('searchBtn').addEventListener('click', () => {
+        //     const q = document.getElementById('searchInput').value.toLowerCase();
+        //     const found = coordinates.find(c => c.name.toLowerCase().includes(q));
+        //     if (found) {
+        //         map.setView([found.lat, found.lng], 16);
+        //         const marker = markers.find(m => m.getPopup().getContent().includes(found.name));
+        //         if (marker) marker.openPopup();
+        //     } else {
+        //         alert('Marker tidak ditemukan!');
+        //     }
+        // });
 
         document.getElementById('searchBtn').addEventListener('click', () => {
             const q = document.getElementById('searchInput').value.toLowerCase().trim();
@@ -145,46 +145,52 @@
         let popupVisible = false;
         const toggleBtn = document.getElementById('togglePopupBtn');
 
-        // Fungsi pembantu untuk bersihkan popup DOM lama
         function removeAllPopupDOMFragments() {
+            // Hapus elemen popup yang mungkin tersisa (mis. dari implementasi clone sebelumnya)
             document.querySelectorAll('.leaflet-popup').forEach(el => el.remove());
         }
 
-        // --- Tombol: Buka Semua Popup ---
-        document.getElementById('openAllBtn').addEventListener('click', () => {
-            // Tutup semua popup dulu biar clean
-            markers.forEach(m => m.closePopup());
-            removeAllPopupDOMFragments();
+        toggleBtn.addEventListener('click', () => {
+            popupVisible = !popupVisible;
 
-            // Buka ulang semua popup dengan animasi fade-in
-            markers.forEach(m => {
-                m.openPopup();
-                const p = m.getPopup();
-                const el = p && p.getElement();
-                if (el) {
-                    el.classList.remove('fade-out');
-                    el.classList.add('fade-in');
-                }
-            });
-        });
+            if (popupVisible) {
+                // Bersihkan dulu semua popup yang ada (baik yang ter-bind maupun sisa klon)
+                markers.forEach(m => m.closePopup()); // pastikan state Leaflet bersih
+                removeAllPopupDOMFragments();
 
-        // --- Tombol: Tutup Semua Popup ---
-        document.getElementById('closeAllBtn').addEventListener('click', () => {
-            // Tutup semua popup dengan animasi fade-out
-            markers.forEach(m => {
-                const p = m.getPopup();
-                const el = p && p.getElement();
-                if (el) {
-                    el.classList.remove('fade-in');
-                    el.classList.add('fade-out');
-                    setTimeout(() => m.closePopup(), 350);
-                } else {
-                    m.closePopup();
-                }
-            });
+                // Buka ulang semua popup (render ulang bersih)
+                markers.forEach(m => {
+                    m.openPopup();
+                    const p = m.getPopup();
+                    // tambahkan animasi jika ada elemen DOM
+                    const el = p && p.getElement();
+                    if (el) {
+                        el.classList.remove('fade-out');
+                        el.classList.add('fade-in');
+                    }
+                });
 
-            // Bersihkan popup DOM fragment setelah animasi
-            setTimeout(() => removeAllPopupDOMFragments(), 400);
+                toggleBtn.innerText = "💬 Tutup Semua Popup";
+            } else {
+                // Tutup semua popup dengan animasi (jika tersedia)
+                markers.forEach(m => {
+                    const p = m.getPopup();
+                    const el = p && p.getElement();
+                    if (el) {
+                        el.classList.remove('fade-in');
+                        el.classList.add('fade-out');
+                        // tunggu animasi lalu tutup popup (agar DOM popup yang dikelola Leaflet ikut terhapus)
+                        setTimeout(() => m.closePopup(), 350);
+                    } else {
+                        m.closePopup();
+                    }
+                });
+
+                // juga bersihkan fragment DOM yang tidak ter-handle setelah delay
+                setTimeout(() => removeAllPopupDOMFragments(), 400);
+
+                toggleBtn.innerText = "💬 Tampilkan Semua Popup";
+            }
         });
     </script>
 </body>

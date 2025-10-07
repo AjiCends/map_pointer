@@ -28,38 +28,75 @@
     <div id="map" class="h-full w-full z-0"></div>
 
     {{-- CONTROL PANEL --}}
-    <div class="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-3 space-y-2 z-[1000] w-64">
-        <!-- Input Pencarian -->
-        <input id="searchInput" type="text" placeholder="Cari nama kegiatan..."
-            class="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring focus:ring-blue-400">
+    <div id="controlCardPanel"
+        class="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-3 z-[1000] w-64 transition-all duration-300 overflow-hidden">
 
-        <!-- Tombol Cari -->
-        <button id="searchBtn"
-            class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 text-sm font-medium focus:ring-4 focus:ring-blue-300">
-            🔍 Cari Marker
-        </button>
+        <!-- Grup Tombol -->
+        <div id="buttonPanelGroup" class="flex flex-col gap-2 transition-all duration-300">
+            <input id="searchInput" type="text" placeholder="Cari nama kegiatan..."
+                class="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring focus:ring-blue-400">
 
-        <!-- Tombol Tampilkan Semua Popup -->
-        <button id="openAllBtn"
-            class="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 text-sm font-medium focus:ring-4 focus:ring-green-300">
-            💬 Tampilkan Semua Popup
-        </button>
+            <button id="searchBtn"
+                class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 text-sm font-medium focus:ring-4 focus:ring-blue-300">
+                🔍 Cari Marker
+            </button>
 
-        <!-- Tombol Tutup Semua Popup -->
-        <button id="closeAllBtn"
-            class="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 text-sm font-medium focus:ring-4 focus:ring-red-300">
-            ❌ Tutup Semua Popup
-        </button>
+            <button id="openAllBtn"
+                class="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 text-sm font-medium focus:ring-4 focus:ring-green-300">
+                💬 Tampilkan Semua Popup
+            </button>
 
-        <!-- Tombol Kembali -->
-        <button onclick="window.location.href='{{ route('programs.index') }}'"
-            class="w-full bg-gray-600 text-white py-2 rounded-md hover:bg-gray-700 text-sm font-medium focus:ring-4 focus:ring-gray-300">
-            Programs
-        </button>
+            <button id="closeAllBtn"
+                class="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 text-sm font-medium focus:ring-4 focus:ring-red-300">
+                ❌ Tutup Semua Popup
+            </button>
+
+            <button onclick="window.location.href='{{ route('programs.index') }}'"
+                class="w-full bg-gray-600 text-white py-2 rounded-md hover:bg-gray-700 text-sm font-medium focus:ring-4 focus:ring-gray-300">
+                Programs
+            </button>
+        </div>
+
+        <!-- Tombol Toggle -->
+        <div class="mt-2">
+            <button id="togglePanelBtn"
+                class="w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600 text-sm font-medium focus:ring-4 focus:ring-yellow-300">
+                👁️ Hide Buttons
+            </button>
+        </div>
     </div>
 
 
     <script>
+        const togglePanelBtn = document.getElementById('togglePanelBtn');
+        const buttonPanelGroup = document.getElementById('buttonPanelGroup');
+        const cardPanel = document.getElementById('controlCardPanel');
+        let hidden = false;
+
+        togglePanelBtn.addEventListener('click', () => {
+            hidden = !hidden;
+
+            if (hidden) {
+                // Sembunyikan semua tombol kecuali toggle
+                buttonPanelGroup.style.maxHeight = '0';
+                buttonPanelGroup.style.opacity = '0';
+                buttonPanelGroup.style.pointerEvents = 'none';
+                cardPanel.style.width = 'fit-content';
+                cardPanel.style.padding = '0.5rem';
+                cardPanel.style.opacity = '0.8';
+                togglePanelBtn.textContent = '👁️ Show Buttons';
+            } else {
+                // Tampilkan kembali semua tombol
+                buttonPanelGroup.style.maxHeight = '1000px';
+                buttonPanelGroup.style.opacity = '1';
+                buttonPanelGroup.style.pointerEvents = 'auto';
+                cardPanel.style.width = '16rem';
+                cardPanel.style.padding = '0.75rem';
+                cardPanel.style.opacity = '1';
+                togglePanelBtn.textContent = '🙈 Hide Buttons';
+            }
+        });
+
         const coordinates = @json($coordinates);
         const map = L.map('map').setView([-8.1725, 113.7008], 12);
 
@@ -114,7 +151,7 @@
             padding: [40, 40]
         });
 
-        document.getElementById('searchBtn').addEventListener('click', () => {
+        function performSearch() {
             const q = document.getElementById('searchInput').value.toLowerCase().trim();
             if (!q) return; // kalau kosong, abaikan
 
@@ -151,7 +188,22 @@
             } else {
                 alert('Marker tidak ditemukan!');
             }
+        };
+
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+
+        // Klik tombol cari
+        searchBtn.addEventListener('click', performSearch);
+
+        // Tekan Enter di input juga trigger pencarian
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // supaya form tidak reload halaman
+                performSearch();
+            }
         });
+
 
 
         // --- Toggle semua popup (baru, bersih, dan dapat di-render ulang) ---

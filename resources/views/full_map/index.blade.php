@@ -74,7 +74,7 @@
 
         // Buat semua marker dan bind popup (autoClose:false supaya bisa banyak terbuka)
         coordinates.forEach(coord => {
-            const marker = L.circleMarker([coord.lat, coord.lng], {
+            const marker = L.marker([coord.lat, coord.lng], {
                 radius: 8,
                 fillColor: "blue",
                 color: "blue",
@@ -85,7 +85,7 @@
 
             // const popupContent = `<b>${coord.name}</b>`;
             const popupContent = `
-                <div style="min-width: 140px;">
+                <div style="min-width: 140px">
                     <b>${coord.name}</b><br>
                     <button 
                         onclick="window.open('https://www.google.com/maps?q=${coord.lat},${coord.lng}', '_blank')" 

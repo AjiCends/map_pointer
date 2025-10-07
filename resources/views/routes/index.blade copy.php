@@ -46,12 +46,6 @@
                     <h3 class="text-lg font-semibold mb-6">Pilih Aktivitas untuk Rute</h3>
 
                     @if ($activities->count() > 0)
-                        <div class="mb-4">
-                            <input type="text" id="searchActivityRoute" placeholder="Cari aktivitas..."
-                                class="w-full md:w-1/2 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                onkeyup="filterRouteActivities()">
-                        </div>
-
                         <form id="routeForm">
                             @csrf
 
@@ -81,10 +75,10 @@
                                 </div>
                             </div>
 
-                            <div id="routeActivityGrid" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-6">
+                            <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-6">
                                 @foreach ($activities as $index => $activity)
                                     <div
-                                        class="activity-card border border-gray-300 rounded-lg p-4 hover:shadow-lg transition-shadow">
+                                        class="border border-gray-300 rounded-lg p-4 hover:shadow-lg transition-shadow">
                                         <div class="flex items-start space-x-3">
                                             <input type="checkbox" name="selected_activities[]"
                                                 value="{{ $activity->id }}" id="activity_{{ $activity->id }}"
@@ -95,8 +89,7 @@
 
                                             <div class="flex-1">
                                                 <label for="activity_{{ $activity->id }}" class="cursor-pointer">
-                                                    <h4 class="activity-name text-md font-semibold mb-2">
-                                                        {{ $activity->name }}</h4>
+                                                    <h4 class="text-md font-semibold mb-2">{{ $activity->name }}</h4>
 
                                                     <div class="text-sm text-gray-600 mb-3">
                                                         <p><strong>Koordinat:</strong></p>
@@ -122,16 +115,13 @@
                             <!-- Selected Activities Counter -->
                             <div class="mb-6 p-4 bg-gray-50 rounded-lg">
                                 <p class="text-sm text-gray-600">
-                                    <span id="selectedCount">0</span> aktivitas dipilih (maksimal 10 aktivitas + lokasi
-                                    saat ini)
+                                    <span id="selectedCount">0</span> aktivitas dipilih (maksimal 10 aktivitas + lokasi saat ini)
                                     <span id="routePreview" class="text-blue-600 font-medium"></span>
                                 </p>
 
                                 <!-- Maximum Limit Warning -->
-                                <div id="maxLimitWarning"
-                                    class="mt-2 p-2 bg-orange-100 border border-orange-300 text-orange-700 text-xs rounded hidden">
-                                    ⚠️ Maksimal 10 aktivitas telah tercapai. Hapus beberapa aktivitas untuk memilih yang
-                                    lain.
+                                <div id="maxLimitWarning" class="mt-2 p-2 bg-orange-100 border border-orange-300 text-orange-700 text-xs rounded hidden">
+                                    ⚠️ Maksimal 10 aktivitas telah tercapai. Hapus beberapa aktivitas untuk memilih yang lain.
                                 </div>
 
                                 <!-- Selected Activities List -->
@@ -169,20 +159,6 @@
         let currentLocation = null;
         let clickOrder = [];
 
-        function filterRouteActivities() {
-            const input = document.getElementById('searchActivityRoute').value.toLowerCase();
-            const cards = document.querySelectorAll('#routeActivityGrid .activity-card');
-
-            cards.forEach(card => {
-                const name = card.querySelector('.activity-name').innerText.toLowerCase();
-                if (name.includes(input)) {
-                    card.style.display = '';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
         function updateRouteButton(clickedCheckbox = null) {
             if (clickedCheckbox) {
                 const activityId = clickedCheckbox.value;
@@ -209,7 +185,7 @@
             const maxActivities = 10;
             const maxLimitWarning = document.getElementById('maxLimitWarning');
             const allActivityCheckboxes = document.querySelectorAll('input[name="selected_activities[]"]');
-
+            
             allActivityCheckboxes.forEach(checkbox => {
                 if (!checkbox.checked && count >= maxActivities) {
                     checkbox.disabled = true;

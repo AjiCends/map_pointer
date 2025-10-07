@@ -81,9 +81,16 @@
                     </div>
 
                     @if ($program->activities->count() > 0)
-                        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        <div class="mb-4">
+                            <input type="text" id="searchActivity" placeholder="Cari kegiatan..."
+                                class="w-full md:w-1/2 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                onkeyup="filterActivities()">
+                        </div>
+
+                        <div id="activityGrid" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                             @foreach ($program->activities as $activity)
-                                <div class="relative border border-gray-300 rounded-lg p-4 hover:shadow-lg transition-shadow ">
+                                <div
+                                    class="activity-card relative border border-gray-300 rounded-lg p-4 hover:shadow-lg transition-shadow">
                                     @if ($activity->order_num)
                                         <div class="absolute -top-3 -right-3">
                                             <div
@@ -93,7 +100,7 @@
                                         </div>
                                     @endif
 
-                                    <h4 class="text-md font-semibold mb-2">{{ $activity->name }}</h4>
+                                    <h4 class="activity-name text-md font-semibold mb-2">{{ $activity->name }}</h4>
 
                                     <div class="text-sm text-gray-600 mb-5">
                                         <p><strong>Koordinat:</strong></p>
@@ -153,12 +160,29 @@
                         <div class="text-center">
                             <div
                                 class="bg-red-50 border border-red-200 text-red-700 px-4 py-6 rounded-lg sm:rounded-2xl text-center shadow">
-                                Belum ada kegiatan dalam program ini</div>
-
+                                Belum ada kegiatan dalam program ini
+                            </div>
                         </div>
                     @endif
                 </div>
             </div>
         </div>
     </div>
+
+
+    <script>
+        function filterActivities() {
+            const input = document.getElementById('searchActivity').value.toLowerCase();
+            const cards = document.querySelectorAll('.activity-card');
+
+            cards.forEach(card => {
+                const name = card.querySelector('.activity-name').innerText.toLowerCase();
+                if (name.includes(input)) {
+                    card.style.display = ''; // tampilkan
+                } else {
+                    card.style.display = 'none'; // sembunyikan
+                }
+            });
+        }
+    </script>
 </x-app-layout>

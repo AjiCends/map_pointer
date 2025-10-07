@@ -9,10 +9,10 @@ class FullMapController extends Controller
 {
     public function index(Request $request)
     {
-        $userId = auth()->id();
+        // $userId = auth()->id();
 
         $programs = Program::with(['activities.galleries'])
-            ->where('user_id', $userId)
+            // ->where('user_id', $userId)
             ->where('is_pin', 1)
             ->get();
 

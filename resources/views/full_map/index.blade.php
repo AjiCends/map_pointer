@@ -52,9 +52,9 @@
         </button>
 
         <!-- Tombol Kembali -->
-        <button onclick="window.location.href='{{ route('dashboard') }}'"
+        <button onclick="window.location.href='{{ route('programs.index') }}'"
             class="w-full bg-gray-600 text-white py-2 rounded-md hover:bg-gray-700 text-sm font-medium focus:ring-4 focus:ring-gray-300">
-            ⬅️ Kembali ke Beranda
+            Programs
         </button>
     </div>
 

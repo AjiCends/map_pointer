@@ -19,6 +19,13 @@
             @endif
 
             <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+                <div class="p-2">
+                    <a href="{{ route('full_map.index') }}"
+                        class="mb-3 inline-flex items-center gap-2 px-3 py-2 text-xs font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        <x-heroicon-o-map class="w-5 h-5 text-white" />
+                        <span>Full Map</span>
+                    </a>
+                </div>
                 <div class="p-6 text-gray-900">
                     @if ($programs->count() > 0)
                         <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3 px-3 sm:px-0 ">

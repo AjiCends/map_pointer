@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/', function () {
-    return view('welcome');
+    // return view('welcome');
+    return redirect()->route('full_map.index');
 });
 
 // Dashboard with user-specific data

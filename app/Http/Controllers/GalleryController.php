@@ -17,9 +17,9 @@ class GalleryController extends Controller
      */
     public function index(Activity $activity)
     {
-        if ($activity->program->user_id !== Auth::id()) {
-            abort(403);
-        }
+        // if ($activity->program->user_id !== Auth::id()) {
+        //     abort(403);
+        // }
 
         $galleries = $activity->galleries()->paginate(12);
 

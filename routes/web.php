@@ -19,9 +19,10 @@ Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'inde
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-Route::get('/map/full', [FullMapController::class, 'index'])->name('full_map.index');
+Route::get('/map/full/{id}', [FullMapController::class, 'index'])->name('full_map.index');
 
-
+Route::get('/activities/{activity}/gallery', [GalleryController::class, 'index'])
+    ->name('gallery.index');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -42,10 +43,11 @@ Route::middleware('auth')->group(function () {
         ->name('activities.update');
     Route::delete('/activities/{activity}', [ActivityController::class, 'destroy'])
         ->name('activities.destroy');
+    Route::get('/programs/{program}/activities/hidden', [ActivityController::class, 'hidden'])
+        ->name('activities.hidden');
+
 
     // Gallery routes
-    Route::get('/activities/{activity}/gallery', [GalleryController::class, 'index'])
-        ->name('gallery.index');
     Route::get('/activities/{activity}/gallery/create', [GalleryController::class, 'create'])
         ->name('gallery.create');
     Route::post('/activities/{activity}/gallery', [GalleryController::class, 'store'])

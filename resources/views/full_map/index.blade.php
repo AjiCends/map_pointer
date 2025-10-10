@@ -51,9 +51,14 @@
                 ❌ Tutup Semua Popup
             </button>
 
-            <button onclick="window.location.href='{{ route('programs.index') }}'"
+            <button onclick="window.location.href='{{ route('programs.show',  $program) }}'"
                 class="w-full bg-gray-600 text-white py-2 rounded-md hover:bg-gray-700 text-sm font-medium focus:ring-4 focus:ring-gray-300">
                 Programs
+            </button>
+
+            <button onclick="window.location='{{ route('routes.index', $program) }}'"
+                class="w-full bg-gray-400 text-white py-2 rounded-md hover:bg-gray-500 text-sm font-medium focus:ring-4 focus:ring-gray-300">
+                Rute
             </button>
         </div>
 
@@ -121,15 +126,39 @@
             }).addTo(map);
 
             // const popupContent = `<b>${coord.name}</b>`;
+            // const popupContent = `
+        //     <div style="min-width: 140px">
+        //         <b>${coord.name}</b><br>
+        //         <button 
+        //             onclick="window.open('https://www.google.com/maps?q=${coord.lat},${coord.lng}', '_blank')" 
+        //             style="margin-top: 6px; display: flex; align-items: center; gap: 4px; background-color: #2563eb; color: white; border: none; border-radius: 6px; padding: 4px 8px; cursor: pointer; font-size: 11px;"
+        //         >
+        //             🔗 GMaps
+        //         </button>
+        //     </div>
+        // `;
+
             const popupContent = `
                 <div style="min-width: 140px">
                     <b>${coord.name}</b><br>
-                    <button 
-                        onclick="window.open('https://www.google.com/maps?q=${coord.lat},${coord.lng}', '_blank')" 
-                        style="margin-top: 6px; display: flex; align-items: center; gap: 4px; background-color: #2563eb; color: white; border: none; border-radius: 6px; padding: 4px 8px; cursor: pointer; font-size: 11px;"
-                    >
-                        🔗 GMaps
-                    </button>
+
+                    <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 6px;">
+                        <!-- Tombol ke Google Maps -->
+                        <button 
+                            onclick="window.open('https://www.google.com/maps?q=${coord.lat},${coord.lng}', '_blank')" 
+                            style="display: flex; align-items: center; gap: 4px; background-color: #2563eb; color: white; border: none; border-radius: 6px; padding: 4px 8px; cursor: pointer; font-size: 11px;"
+                        >
+                            🔗 GMaps
+                        </button>
+
+                        <!-- Tombol ke Gallery -->
+                        <button 
+                            onclick="window.open('/activities/${coord.id}/gallery', '_blank')" 
+                            style="display: flex; align-items: center; gap: 4px; background-color: #16a34a; color: white; border: none; border-radius: 6px; padding: 4px 8px; cursor: pointer; font-size: 11px;"
+                        >
+                            🖼️ Gallery
+                        </button>
+                    </div>
                 </div>
             `;
 

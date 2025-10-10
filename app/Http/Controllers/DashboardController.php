@@ -13,13 +13,18 @@ class DashboardController extends Controller
     public function index()
     {
         $userId = Auth::id();
-        
+
         $currentUser = Auth::user();
-        
+
         $programs = Program::with(['activities.galleries'])
             ->where('user_id', $userId)
             ->where('is_pin', 1)
             ->get();
+
+        $pined_program = Program::with(['activities.galleries'])
+            ->where('user_id', $userId)
+            ->where('is_pin', 1)
+            ->first();
 
         // $allPrograms = Program::with(['activities.galleries'])
         // ->where('is_pin', 1)
@@ -36,6 +41,6 @@ class DashboardController extends Controller
             ]);
         }
 
-        return view('dashboard', compact('programs'));
+        return view('dashboard', compact('programs', 'pined_program'));
     }
 }

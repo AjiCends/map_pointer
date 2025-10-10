@@ -7,17 +7,15 @@ use Illuminate\Http\Request;
 
 class FullMapController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, $id)
     {
-        // $userId = auth()->id();
-
-        $programs = Program::with(['activities.galleries'])
-            // ->where('user_id', $userId)
+        $program = Program::with(['activities.galleries'])
             ->where('is_pin', 1)
-            ->get();
+            ->where('id', $id)
+            ->first();
 
-        $coordinates = $programs->flatMap(
-            fn($program) => $program->activities->map(fn($a) => [
+        $coordinates = $program
+            ? $program->activities->map(fn($a) => [
                 'id' => $a->id,
                 'program_id' => $program->id,
                 'program_name' => $program->name,
@@ -26,10 +24,8 @@ class FullMapController extends Controller
                 'name' => $a->name,
                 'desc' => $a->description ?? 'Tidak ada deskripsi',
             ])
-        );
+            : collect(); // fallback kalau tidak ada program
 
-        return view('full_map.index', compact('coordinates'));
+        return view('full_map.index', compact('coordinates', 'program'));
     }
-
-
 }

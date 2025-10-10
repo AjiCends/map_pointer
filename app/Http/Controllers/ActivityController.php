@@ -116,4 +116,9 @@ class ActivityController extends Controller
         notyf('Kegiatan berhasil dihapus!');
         return redirect()->route('programs.show', $programId);
     }
+
+    public function hidden(Request $request)
+    {
+        
+    }
 }

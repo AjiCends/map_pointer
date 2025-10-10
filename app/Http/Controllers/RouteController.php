@@ -18,8 +18,8 @@ class RouteController extends Controller
             abort(403);
         }
 
-        $activities = $program->activities()->orderBy('order_num','asc')->get();
-        
+        $activities = $program->activities()->orderBy('order_num', 'asc')->get();
+
         return view('routes.index', compact('program', 'activities'));
     }
 
@@ -40,38 +40,37 @@ class RouteController extends Controller
             'current_lng' => 'required_if:use_current_location,on|nullable|numeric'
         ]);
 
-        $selectedActivities = Activity::whereIn('id', $request->selected_activities)
-            ->where('program_id', $program->id)
-            ->orderBy('created_at', 'asc')
+        // dd($request->selected_activities);
+
+        $activitiesIds = array_map('intval', $request->selected_activities);
+        $selectedActivities = Activity::whereIn('id', $activitiesIds)
+            ->orderByRaw('FIELD(id, ' . implode(',', $activitiesIds) . ')')
             ->get();
 
         $useCurrentLocation = $request->filled('use_current_location') && $request->use_current_location;
-        
+
         $totalPoints = $selectedActivities->count();
         if ($useCurrentLocation) {
             $totalPoints += 1;
         }
-        
+
         if ($totalPoints < 2) {
             return response()->json([
-                'success' => false, 
+                'success' => false,
                 'message' => 'Pilih minimal 2 titik untuk membuat rute!'
             ], 400);
         }
 
         if ($useCurrentLocation) {
             $googleMapsUrl = $this->buildGoogleMapsUrlWithCurrentLocation(
-                $request->current_lat, 
-                $request->current_lng, 
+                $request->current_lat,
+                $request->current_lng,
                 $selectedActivities
             );
         } else {
-            $origin = $selectedActivities->first();
-            $destination = $selectedActivities->last();
-            $waypoints = $selectedActivities->slice(1, -1);
-            $googleMapsUrl = $this->buildGoogleMapsUrl($origin, $destination, $waypoints);
+            $googleMapsUrl = $this->buildGoogleMapsUrl($selectedActivities);
         }
-        
+
         return response()->json([
             'success' => true,
             'google_maps_url' => $googleMapsUrl
@@ -81,21 +80,17 @@ class RouteController extends Controller
     /**
      * Build Google Maps URL with waypoints
      */
-    private function buildGoogleMapsUrl($origin, $destination, $waypoints)
+    private function buildGoogleMapsUrl($selectedActivities)
     {
-        $baseUrl = 'https://www.google.com/maps/dir/';
-        
-        $url = $baseUrl . $origin->latitude . ',' . $origin->longitude;
-        
-        foreach ($waypoints as $waypoint) {
-            $url .= '/' . $waypoint->latitude . ',' . $waypoint->longitude;
+        $baseUrl = 'https://www.google.com/maps/dir';
+
+        foreach ($selectedActivities as $waypoint) {
+            $baseUrl .= '/' . $waypoint->latitude . ',' . $waypoint->longitude;
         }
-        
-        $url .= '/' . $destination->latitude . ',' . $destination->longitude;
-        
-        $url .= '?entry=ttu&g_ep=EgoyMDI1MDkxMS4wIKXMDSoASAFQAw%3D%3D';
-        
-        return $url;
+
+        $baseUrl .= '?entry=ttu&g_ep=EgoyMDI1MDkxMS4wIKXMDSoASAFQAw%3D%3D';
+
+        return $baseUrl;
     }
 
     /**
@@ -104,15 +99,15 @@ class RouteController extends Controller
     private function buildGoogleMapsUrlWithCurrentLocation($currentLat, $currentLng, $activities)
     {
         $baseUrl = 'https://www.google.com/maps/dir/';
-        
+
         $url = $baseUrl . $currentLat . ',' . $currentLng;
-        
+
         foreach ($activities as $activity) {
             $url .= '/' . $activity->latitude . ',' . $activity->longitude;
         }
-        
+
         $url .= '?entry=ttu&g_ep=EgoyMDI1MDkxMS4wIKXMDSoASAFQAw%3D%3D';
-        
+
         return $url;
     }
 }

@@ -7,12 +7,19 @@ use Illuminate\Http\Request;
 
 class FullMapController extends Controller
 {
-    public function index(Request $request, $id)
+    public function index(Request $request, $id = null)
     {
-        $program = Program::with(['activities.galleries'])
-            ->where('is_pin', 1)
-            ->where('id', $id)
-            ->first();
+        if ($id != null) {
+            $program = Program::with(['activities.galleries'])
+                ->where('id', $id)
+                ->first();
+        } else {
+            $program = Program::with(['activities.galleries'])
+                ->where('is_pin', 1)
+                ->first();
+        }
+
+
 
         $coordinates = $program
             ? $program->activities->map(fn($a) => [

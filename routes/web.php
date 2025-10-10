@@ -19,7 +19,7 @@ Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'inde
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-Route::get('/map/full/{id}', [FullMapController::class, 'index'])->name('full_map.index');
+Route::get('/map/full/{id?}', [FullMapController::class, 'index'])->name('full_map.index');
 
 Route::get('/activities/{activity}/gallery', [GalleryController::class, 'index'])
     ->name('gallery.index');

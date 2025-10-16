@@ -120,7 +120,7 @@
             console.log('test coord', coord);
             
 
-            const number = coord.order_num;
+            const number = coord.order_num ?? '';
 
             const numberedIcon = L.divIcon({
                 className: "", // biar style-nya murni dari inline

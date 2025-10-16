@@ -133,20 +133,20 @@
                 <div 
                     style="
                         position: absolute;
-                        top: 6px;
+                        top: 0px;
                         left: 50%;
                         transform: translateX(-50%);
-                        background: white;
-                        color: black;
+                        background: rgba(42, 129, 203);
+                        color: white;
                         border-radius: 50%;
-                        width: 18px;
-                        height: 18px;
+                        width: 27px;
+                        height: 27px;
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        font-size: 11px;
+                        font-size: 16px;
                         font-weight: bold;
-                        border: 1px solid #333;
+                        // border: 1px solid #333;
                         box-shadow: 0 0 2px rgba(0,0,0,0.5);
                     "
                 >${number}</div>

@@ -14,7 +14,8 @@ class Activity extends Model
         'name',
         'latitude',
         'longitude',
-        'order_num'
+        'order_num',
+        'is_hide',
     ];
 
     public function program()

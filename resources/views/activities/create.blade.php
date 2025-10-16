@@ -60,17 +60,6 @@
                             @enderror
                         </div>
 
-                        <div class="mb-6">
-                            <label for="order_num" class="block text-sm font-medium text-gray-700 mb-2">
-                                Nomor Urut
-                            </label>
-                            <input type="text" name="order_num" id="order_num" value="{{ old('order_num') }}"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            @error('order_num')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
                         <div class="flex justify-between items-center">
                             <a href="{{ route('programs.show', $program->id) }}"
                                 class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">

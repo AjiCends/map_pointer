@@ -10,16 +10,14 @@ class FullMapController extends Controller
     public function index(Request $request, $id = null)
     {
         if ($id != null) {
-            $program = Program::with(['activities.galleries'])
-                ->where('id', $id)
-                ->first();
+            $program = Program::with(['activities' => function ($q) {
+                $q->where('is_hide', 0)->with('galleries');
+            }])->where('id', $id)->first();
         } else {
-            $program = Program::with(['activities.galleries'])
-                ->where('is_pin', 1)
-                ->first();
+            $program = Program::with(['activities' => function ($q) {
+                $q->where('is_hide', 0)->with('galleries');
+            }])->where('is_pin', 1)->first();
         }
-
-
 
         $coordinates = $program
             ? $program->activities->map(fn($a) => [

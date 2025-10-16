@@ -39,6 +39,8 @@ class ActivityController extends Controller
             'latitude' => 'required',
             'longitude' => 'required',
             'order_num' => 'sometimes',
+            'is_hide' => 'sometimes',
+
         ]);
 
         Activity::create([
@@ -47,6 +49,7 @@ class ActivityController extends Controller
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
             'order_num' => $request->order_num,
+            'is_hide' => $request->is_hide,
         ]);
 
         notyf('Aktivitas berhasil dibuat!');
@@ -88,13 +91,17 @@ class ActivityController extends Controller
             'latitude' => 'required',
             'longitude' => 'required',
             'order_num' => 'sometimes',
+            'is_hide' => 'sometimes',
         ]);
+
+        // dd($request->all());
 
         $activity->update([
             'name' => $request->name,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
             'order_num' => $request->order_num,
+            'is_hide' => $request->is_hide ?? 0,
         ]);
 
         notyf('Kegiatan berhasil diupdate!');

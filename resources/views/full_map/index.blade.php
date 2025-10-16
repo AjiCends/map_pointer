@@ -136,8 +136,8 @@
                         top: 0px;
                         left: 50%;
                         transform: translateX(-50%);
-                        background: rgba(42, 129, 203);
-                        color: white;
+                        background: white;
+                        color: black;
                         border-radius: 50%;
                         width: 27px;
                         height: 27px;
@@ -146,7 +146,7 @@
                         justify-content: center;
                         font-size: 16px;
                         font-weight: bold;
-                        // border: 1px solid #333;
+                        border: 2px solid rgba(42, 129, 203);
                         box-shadow: 0 0 2px rgba(0,0,0,0.5);
                     "
                 >${number}</div>

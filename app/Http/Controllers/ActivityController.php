@@ -49,7 +49,7 @@ class ActivityController extends Controller
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
             'order_num' => $request->order_num,
-            'is_hide' => $request->is_hide,
+            'is_hide' => $request->is_hide ?? 0,
         ]);
 
         notyf('Aktivitas berhasil dibuat!');

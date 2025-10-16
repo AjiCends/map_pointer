@@ -51,7 +51,7 @@
                 ❌ Tutup Semua Popup
             </button>
 
-            <button onclick="window.location.href='{{ route('programs.show',  $program) }}'"
+            <button onclick="window.location.href='{{ route('programs.show', $program) }}'"
                 class="w-full bg-gray-600 text-white py-2 rounded-md hover:bg-gray-700 text-sm font-medium focus:ring-4 focus:ring-gray-300">
                 Programs
             </button>
@@ -115,28 +115,59 @@
         let bounds = L.latLngBounds([]);
 
         // Buat semua marker dan bind popup (autoClose:false supaya bisa banyak terbuka)
-        coordinates.forEach(coord => {
+        coordinates.forEach((coord, index) => {
+
+            console.log('test coord', coord);
+            
+
+            const number = coord.order_num;
+
+            const numberedIcon = L.divIcon({
+                className: "", // biar style-nya murni dari inline
+                html: `
+            <div style="position: relative; width: 25px; height: 41px;">
+                <img 
+                    src="https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png" 
+                    style="width: 25px; height: 41px; display: block;"
+                />
+                <div 
+                    style="
+                        position: absolute;
+                        top: 6px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        background: white;
+                        color: black;
+                        border-radius: 50%;
+                        width: 18px;
+                        height: 18px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 11px;
+                        font-weight: bold;
+                        border: 1px solid #333;
+                        box-shadow: 0 0 2px rgba(0,0,0,0.5);
+                    "
+                >${number}</div>
+            </div>
+        `,
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [0, -30]
+            });
+
+            // Kode utama
             const marker = L.marker([coord.lat, coord.lng], {
                 radius: 8,
                 fillColor: "blue",
                 color: "blue",
                 weight: 2,
                 opacity: 1,
-                fillOpacity: 1
+                fillOpacity: 1,
+                icon: numberedIcon
             }).addTo(map);
 
-            // const popupContent = `<b>${coord.name}</b>`;
-            // const popupContent = `
-        //     <div style="min-width: 140px">
-        //         <b>${coord.name}</b><br>
-        //         <button 
-        //             onclick="window.open('https://www.google.com/maps?q=${coord.lat},${coord.lng}', '_blank')" 
-        //             style="margin-top: 6px; display: flex; align-items: center; gap: 4px; background-color: #2563eb; color: white; border: none; border-radius: 6px; padding: 4px 8px; cursor: pointer; font-size: 11px;"
-        //         >
-        //             🔗 GMaps
-        //         </button>
-        //     </div>
-        // `;
 
             const popupContent = `
                 <div style="min-width: 140px">

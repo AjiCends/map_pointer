@@ -30,6 +30,7 @@ class FullMapController extends Controller
                 'lng' => $a->longitude,
                 'name' => $a->name,
                 'desc' => $a->description ?? 'Tidak ada deskripsi',
+                'order_num' => $a->order_num,
             ])
             : collect(); // fallback kalau tidak ada program
 

@@ -1,7 +1,7 @@
 # Laravel standard
-/vendor
-/node_modules
-/public/storage
+# /vendor
+# /node_modules
+# /public/storage
 /public/build
 /public/hot
 /storage/*.key
